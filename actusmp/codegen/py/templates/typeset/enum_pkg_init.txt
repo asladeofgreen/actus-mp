@@ -1,0 +1,6 @@
+# **********************************
+# N.B. Auto-generated using actus-mp
+# **********************************
+{% for term in terms %}
+from pyactus.typeset.enums.{{utils.to_underscore_case(term.identifier)}} import {{utils.to_camel_case(term.identifier)}}
+{% endfor %}

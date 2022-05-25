@@ -1,63 +1,61 @@
-import typing
-
 from actusmp.dictionary.accessor import Accessor
-from actusmp.model import Contract
 from actusmp.model import Applicability
-from actusmp.model import ApplicabilityItem
-from actusmp.model import ApplicabilitySet
+from actusmp.model import ApplicableContractTermInfo
+from actusmp.model import Contract
 from actusmp.model import ContractSet
 from actusmp.model import Dictionary
-from actusmp.model import Term
 from actusmp.model import Enum
 from actusmp.model import EnumMember
+from actusmp.model import State
+from actusmp.model import StateSet
+from actusmp.model import Term
 from actusmp.model import TermSet
-from actusmp.model import TermGroup
-from actusmp.model import TermGroupSet
 
 
 def get_dictionary() -> Dictionary:
-    """Maps actus-dictionary.json file into a custom domain model.
+    """Maps actus-dictionary.json file -> meta model.
     
     """
     accessor = Accessor()
-    term_set = _get_term_set(accessor)
+    applicability=_get_applicability(accessor)
+    global_term_set = _get_term_set(accessor)
+    state_set = _get_state_set(accessor)
 
     return Dictionary(
-        applicability=_get_applicability(accessor),
-        contract_set=_get_contract_set(accessor),
-        term_group_set=_get_term_group_set(term_set),
-        term_set=term_set,
+        applicability=applicability,
+        contract_set=_get_contract_set(accessor, global_term_set, applicability),
+        global_term_set=global_term_set,
+        state_set=state_set,
         version=accessor.version,
         version_date=accessor.version_date
     )
 
 
 def _get_applicability(accessor: Accessor) -> Applicability:
-    return Applicability(
-        items=list(map(_get_applicability_set, accessor.applicability))
-    )
+    items = []
+    for obj in accessor.applicability:
+        contract_id = obj["contract"]
+        for term_id, info in obj.items():
+            if term_id == "contract":
+                continue
+            items.append(
+                ApplicableContractTermInfo(
+                    contract_id=contract_id,
+                    term_id=term_id,
+                    info=info
+                )
+            )
+
+    return Applicability(items)
 
 
-def _get_applicability_set(obj: dict) -> ApplicabilitySet:
-    return ApplicabilitySet(
-        contract_id=obj["contract"],
-        items=list(map(_get_applicability_item, obj.items()))
-    )
-
-
-def _get_applicability_item(obj: typing.Tuple[str, str]) -> ApplicabilityItem:
-    term_id, info = obj
-
-    return ApplicabilityItem(term_id, info)
-
-
-def _get_contract_set(accessor: Accessor) -> ContractSet:
+def _get_contract_set(accessor: Accessor, global_term_set: TermSet, applicability: Applicability) -> ContractSet:
     return ContractSet(
-        items=list(map(_get_contract, accessor.taxonomy))
-    )
+        list(map(lambda i: _get_contract(i, global_term_set, applicability), accessor.contract_type_set))
+        )
 
 
-def _get_contract(obj: dict) -> Contract:
+def _get_contract(obj: dict, global_term_set: TermSet, applicability: Applicability) -> Contract:
     return Contract(
         acronym=obj["acronym"],
         classification=obj["class"],
@@ -67,7 +65,18 @@ def _get_contract(obj: dict) -> Contract:
         family=obj["family"],
         name=obj["name"],
         status=obj.get("status", "Unknown"),
+        term_set=_get_contract_term_set(obj["identifier"], global_term_set, applicability)
     )
+
+
+def _get_contract_term_set(contract_id: str, global_term_set: TermSet, applicability: Applicability) -> Contract:
+    contract_term_set = []
+    for applicability_item in applicability.get_set_by_contract_id(contract_id):
+        for term in global_term_set:
+            if term.identifier == applicability_item.term_id:
+                contract_term_set.append(term)
+
+    return TermSet(contract_term_set)
 
 
 def _get_enum_member(obj: dict) -> EnumMember:
@@ -80,22 +89,47 @@ def _get_enum_member(obj: dict) -> EnumMember:
     )
 
 
+def _get_state_set(accessor: Accessor) -> StateSet:
+    return StateSet(list(map(_get_state, accessor.state_set)))
+
+
+def _get_state(obj: dict) -> Term:
+    if obj["type"].startswith("Enum"):
+        return State(
+            acronym=obj["acronym"],
+            allowed_values=obj["allowedValues"],
+            description=obj.get("description", obj["name"]),
+            enum_members=[_get_enum_member(i) for i in obj["allowedValues"]],
+            identifier=obj["identifier"],
+            name=obj["name"],
+            type=obj["type"]
+        )
+    else:
+        return State(
+            acronym=obj["acronym"],
+            allowed_values=obj["allowedValues"],
+            description=obj.get("description", obj["name"]),
+            enum_members=[],
+            identifier=obj["identifier"],
+            name=obj["name"],
+            type=obj["type"]
+        )
+
+
 def _get_term_set(accessor: Accessor) -> TermSet:
-    return TermSet(
-        items=list(map(_get_term, accessor.term_set))
-    )
+    return TermSet(list(map(_get_term, accessor.term_set)))
 
 
 def _get_term(obj: dict) -> Term:
-    if obj["type"] == "Enum":
+    if obj["type"].startswith("Enum"):
         return Enum(
+            _members=[_get_enum_member(i) for i in obj["allowedValues"]],
             acronym=obj["acronym"],
             allowed_values=obj["allowedValues"],
-            default=obj["default"],
-            description=obj.get("description", obj["name"]),
+            default=None if len(obj["default"].strip()) == 0 else obj["default"].strip(),
+            description=obj.get("description", obj["name"]).replace("\n", ""),
             group_id=obj["group"],
             identifier=obj["identifier"],
-            items=[_get_enum_member(i) for i in obj["allowedValues"]],
             name=obj["name"],
             type=obj["type"]
         )
@@ -103,24 +137,10 @@ def _get_term(obj: dict) -> Term:
         return Term(
             acronym=obj["acronym"],
             allowed_values=obj["allowedValues"],
-            default=obj["default"],
-            description=obj.get("description", obj["name"]),
+            default=None if len(obj["default"].strip()) == 0 else obj["default"].strip(),
+            description=obj.get("description", obj["name"]).replace("\n", ""),
             group_id=obj["group"],
             identifier=obj["identifier"],
             name=obj["name"],
             type=obj["type"]
         )
-
-
-def _get_term_group_set(termset: TermSet) -> TermGroupSet:
-    return TermGroupSet(
-        groups=[_get_term_group(i, termset) for i in set([i.group_id for i in termset])]
-    )
-
-
-def _get_term_group(group_id: str, termset: TermSet) -> TermGroup:
-    return TermGroup(
-        group_id=group_id,
-        name=group_id,
-        term_set=termset.get_by_group_id(group_id)
-    )

@@ -1,7 +1,4 @@
 import re
-from typing import ValuesView
-
-from actusmp.model import Term
 
 
 def to_camel_case(name: str, separator: str ='_'):
@@ -55,31 +52,3 @@ def to_underscore_case(target: str):
     r = r.lower()
 
     return r
-
-
-def to_python_type(term: Term) -> str:
-    """Maps an Actus term's type to it's pythonic equivalent.
-    
-    """
-    if term.type == "Real":
-        return "float"
-    elif term.type == "Varchar":
-        return "str"
-    elif term.type == "Timestamp":
-        return "datetime.datetime"
-    elif term.type == "Enum":
-        return f"enums.{to_camel_case(term.identifier)}"
-
-    return term.type
-
-
-def to_enum_member(name: str) -> str:
-    """Maps an enum member name to a python safe enum member name.
-    
-    """
-    try:
-        int(name[0])
-    except ValueError:
-        return name
-    else:
-        return f"_{name}"

@@ -1,3 +1,0 @@
-{% for contract in contract_set %}
-from pyactus.domain.classes.{{utils.to_underscore_case(contract.identifier)}} import {{utils.to_camel_case(contract.identifier)}}
-{% endfor %}

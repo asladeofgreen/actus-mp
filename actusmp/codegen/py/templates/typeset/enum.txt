@@ -1,3 +1,6 @@
+# **********************************
+# N.B. Auto-generated using actus-mp
+# **********************************
 import enum
 
 
@@ -9,6 +12,6 @@ class {{utils.to_camel_case(term.identifier)}}(enum.Enum):
     """
 {% for member in term %}
     # {{member.name}} :: {{member.description}}
-    {{utils.to_enum_member(member.acronym)}} = {{member.option}}
+    {{utils.to_python_enum_member(member.acronym)}} = {{member.option}}
 
 {% endfor %}

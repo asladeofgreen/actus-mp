@@ -1,32 +1,42 @@
 import datetime
 import typing
 
-from actusmp.utils import resource_loader
+import json
+import os
+import pathlib
 
+
+# Path to actus-dictionary.json file.
+_FILE: pathlib.Path = pathlib.Path(os.path.dirname(__file__)) / "actus-dictionary.json"
 
 class Accessor():
-    """Encapsulates access to underlying JSON encoded actus-dictionary definition.
+    """Encapsulates access to actus-dictionary.json.
     
     """
     def __init__(self):
-        self.metadata = resource_loader.get_dictionary()
+        with open(_FILE, "r") as fstream:
+            self._actus_dictionary = json.loads(fstream.read())
     
     @property
     def applicability(self) -> typing.List[dict]:
-        return self.metadata["applicability"].values()
+        return self._actus_dictionary["applicability"].values()
 
     @property
-    def taxonomy(self) -> typing.List[dict]:
-        return self.metadata["taxonomy"].values()
+    def contract_type_set(self) -> typing.List[dict]:
+        return self._actus_dictionary["taxonomy"].values()
+
+    @property
+    def state_set(self) -> typing.List[dict]:
+        return self._actus_dictionary["states"].values()
 
     @property
     def term_set(self) -> typing.List[dict]:
-        return self.metadata["terms"].values()
+        return self._actus_dictionary["terms"].values()
 
     @property
     def version(self) -> str:
-        return self.metadata["version"]["Version"]
+        return self._actus_dictionary["version"]["Version"]
 
     @property
     def version_date(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self.metadata["version"]["Date"])
+        return datetime.datetime.fromisoformat(self._actus_dictionary["version"]["Date"])
