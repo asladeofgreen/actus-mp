@@ -22,6 +22,7 @@ def write_typeset(dest: pathlib.Path, dictionary: Dictionary):
 
     """
     for writer in (
+        _write_typeset_dirs,
         _write_typeset_pkg_init,
         _write_typeset_termsets,
         _write_typeset_termsets_pkg_init,
@@ -120,32 +121,15 @@ def _write_funcset_stubs_pkg_init(
             fstream.write(code_block)
 
 
-def _write_typeset_termsets(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.typeset.terms.{contract}.py`.
+def _write_typeset_dirs(dictionary: Dictionary, dest: pathlib.Path):
+    """Writes directories to `pyactus.typeset`.
     
     """
-    for contract, code_block in gen_typeset_termsets(dictionary):
-        fpath = dest / "typeset" / "terms" / f"{to_underscore_case(contract.identifier)}.py"
-        with open(fpath, "w") as fstream:
-            fstream.write(code_block)
-
-
-def _write_typeset_termsets_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.typeset.terms.__init__.py`.
-    
-    """
-    code_block = gen_typeset_termsets_pkg_init(dictionary)
-    with open(dest / "typeset" / "terms" / "__init__.py", "w") as fstream:
-        fstream.write(code_block)
-
-
-def _write_typeset_states(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.typeset.states.py`.
-    
-    """
-    code_block = gen_typeset_states(dictionary)
-    with open(dest / "typeset" / "states.py", "w") as fstream:
-        fstream.write(code_block)
+    for dpath in (
+        dest / "typeset" / "enums",
+        dest / "typeset" / "termsets"
+    ):
+        dpath.mkdir(parents=True, exist_ok=True)
 
 
 def _write_typeset_enums(dictionary: Dictionary, dest: pathlib.Path):
@@ -164,6 +148,34 @@ def _write_typeset_enums_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
     """
     code_block = gen_typeset_enums_pkg_init(dictionary)
     with open(dest / "typeset" / "enums" / "__init__.py", "w") as fstream:
+        fstream.write(code_block)
+
+
+def _write_typeset_states(dictionary: Dictionary, dest: pathlib.Path):
+    """Writes to `pyactus.typeset.states.py`.
+    
+    """
+    code_block = gen_typeset_states(dictionary)
+    with open(dest / "typeset" / "states.py", "w") as fstream:
+        fstream.write(code_block)
+
+
+def _write_typeset_termsets(dictionary: Dictionary, dest: pathlib.Path):
+    """Writes to `pyactus.typeset.termsets.{contract}.py`.
+    
+    """
+    for contract, code_block in gen_typeset_termsets(dictionary):
+        fpath = dest / "typeset" / "termsets" / f"{to_underscore_case(contract.identifier)}.py"
+        with open(fpath, "w") as fstream:
+            fstream.write(code_block)
+
+
+def _write_typeset_termsets_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
+    """Writes to `pyactus.typeset.termsets.__init__.py`.
+    
+    """
+    code_block = gen_typeset_termsets_pkg_init(dictionary)
+    with open(dest / "typeset" / "termsets" / "__init__.py", "w") as fstream:
         fstream.write(code_block)
 
 

@@ -3,13 +3,14 @@
 # **********************************
 from pyactus.typeset.enums import ContractType
 {% for contract in dictionary.applicable_contracts %}
-from pyactus.typeset.terms.{{utils.to_underscore_case(contract.identifier)}} import TermsFor{{utils.to_camel_case(contract.identifier)}}
+from pyactus.typeset.termsets.{{utils.to_underscore_case(contract.identifier)}} import TermsetOf{{utils.to_camel_case(contract.identifier)}}
 {% endfor %}
 
 
 # Set of all supported contract termsets.
 CONTRACT_TERMSETS = {
 {% for contract in dictionary.applicable_contracts %}
-    ContractType.{{contract.acronym}}: TermsFor{{utils.to_camel_case(contract.identifier)}},
+    ContractType.{{contract.acronym}}: TermsetOf{{utils.to_camel_case(contract.identifier)}},
 {% endfor %}
 }
+

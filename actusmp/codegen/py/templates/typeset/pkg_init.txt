@@ -4,14 +4,14 @@
 from pyactus.typeset.auxiliary import ContractReference
 from pyactus.typeset.auxiliary import Cycle
 from pyactus.typeset.auxiliary import Period
-from pyactus.typeset.contracts import ContractTerms
+from pyactus.typeset.contracts import ContractTermset
 {% for enum in dictionary.global_enum_set %}
 from pyactus.typeset.enums import {{utils.to_camel_case(enum.identifier)}}
 {% endfor %}
 from pyactus.typeset.events import Event
 from pyactus.typeset.events import EventType
-from pyactus.typeset.terms import CONTRACT_TERMSETS
+from pyactus.typeset.termsets import CONTRACT_TERMSETS
 {% for contract in dictionary.applicable_contracts %}
-from pyactus.typeset.terms import TermsFor{{utils.to_camel_case(contract.identifier)}}
+from pyactus.typeset.termsets import TermsetOf{{utils.to_camel_case(contract.identifier)}}
 {% endfor %}
 from pyactus.typeset.states import StateSpace

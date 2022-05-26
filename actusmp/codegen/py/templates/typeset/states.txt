@@ -16,16 +16,16 @@ class StateSpace():
     or accrued interest for a lending instrument. On the other hand, states are 
     updated throughout an instrument's lifetime through evaluation of state 
     transition function in the various contract events.
-    
+
     """
-    {% for state in dictionary.state_set %}
-# {{state.acronym}} :: {{state.name}} :: {{state.short_description}}    
+{% for state in dictionary.state_set %}
+# {{state.acronym}} :: {{state.name}} :: {{state.short_description}}.
     {{utils.to_underscore_case(state.identifier)}}: {{utils.to_python_type(state)}}
 
-    {% endfor %}
+{% endfor %}
 
     def __str__(self):
         """Instance string representation.
-        
+
         """
         return " | ".join(i for i in self.__dict__.values())

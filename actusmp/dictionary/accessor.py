@@ -9,6 +9,7 @@ import pathlib
 # Path to actus-dictionary.json file.
 _FILE: pathlib.Path = pathlib.Path(os.path.dirname(__file__)) / "actus-dictionary.json"
 
+
 class Accessor():
     """Encapsulates access to actus-dictionary.json.
     

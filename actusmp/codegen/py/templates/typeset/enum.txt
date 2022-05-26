@@ -11,7 +11,7 @@ class {{utils.to_camel_case(term.identifier)}}(enum.Enum):
 
     """
 {% for member in term %}
-    # {{member.name}} :: {{member.description}}
+    # {{member.name}} :: {{member.description.strip()}}
     {{utils.to_python_enum_member(member.acronym)}} = {{member.option}}
 
 {% endfor %}

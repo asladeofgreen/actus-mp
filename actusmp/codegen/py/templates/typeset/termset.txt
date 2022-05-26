@@ -11,7 +11,7 @@ from pyactus.typeset import contracts
 
 
 @dataclasses.dataclass
-class TermsFor{{utils.to_camel_case(contract.identifier)}}(contracts.ContractTerms):
+class TermsetOf{{utils.to_camel_case(contract.identifier)}}(contracts.ContractTermset):
     """Set of applicable terms: {{contract.acronym}} -> {{contract.name}}.
 
     {{contract.description}}
@@ -19,10 +19,15 @@ class TermsFor{{utils.to_camel_case(contract.identifier)}}(contracts.ContractTer
     """
 {% for term in contract.term_set %}
 {% if term.identifier not in ("contractType",) %}
-    # {{term.name}} :: {{term.short_description}}
-    {{utils.to_underscore_case(term.identifier)}} : {{utils.to_python_type(term)}} = {{utils.to_python_default(term)}}
+{% if term.short_description %}
+    # {{term.name}} :: {{term.short_description}}.
+{% else %}
+    # {{term.name}}.
+{% endif %}
+    {{utils.to_underscore_case(term.identifier)}}: {{utils.to_python_type(term)}} = {{utils.to_python_default(term)}}
 
 {% endif %}
 {% endfor %}
     # Contract Type :: The ContractType is the most important information. It defines the cash flow generating pattern of a contract. The ContractType information in combination with a given state of the risk factors will produce a deterministic sequence of cash flows which are the basis of any financial analysis.
-    contract_type : enums.ContractType = enums.ContractType.{{contract.acronym}}
+    contract_type: enums.ContractType = enums.ContractType.{{contract.acronym}}
+
