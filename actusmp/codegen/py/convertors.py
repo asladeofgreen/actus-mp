@@ -1,3 +1,4 @@
+from actusmp.model import Enum
 from actusmp.model import EnumMember
 from actusmp.model import Term
 from actusmp.utils.convertors import *
@@ -40,15 +41,27 @@ def to_python_default(term: Term) -> str:
             return f"enums.{to_camel_case(term.identifier)}.{to_python_enum_member_1(term.default_member)}"
         elif term.type == "Period":
             return "None"
-        return f"'TODO: format {term.default}'"
+        elif term.type == "Real":
+            try:
+                return float(term.default)
+            except:
+                return float(0)
+
+        return f"'TODO: format {term.type} :: {term.default}'"
 
 
-def to_python_enum_member(member_name: str) -> str:
-    """Maps an enum member name to a python safe enum member name.
+def to_python_enum_member(definition: Enum, member: EnumMember) -> str:
+    """Maps an enum member to a python safe enum member name.
     
     """
     # Some enum members begin with an integer which is unsafe in python.
-    member_name = member_name.upper()
+    member_name = member.acronym
+    try:
+        member_name = member_name.upper()
+    except:
+        print(definition, member)
+        raise
+
     try:
         int(member_name[0])
     except ValueError:

@@ -33,8 +33,8 @@ def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
     
     """
     tmpl = get_template("typeset/enum.txt")
-    for term in dictionary.global_enum_set:
-        yield term, tmpl.render(utils=convertors, term=term)
+    for definition in dictionary.global_enum_set:
+        yield definition, tmpl.render(utils=convertors, definition=definition)
 
 
 def gen_typeset_enums_pkg_init(dictionary: Dictionary) -> str:
@@ -43,7 +43,7 @@ def gen_typeset_enums_pkg_init(dictionary: Dictionary) -> str:
     """
     tmpl = get_template("typeset/enum_pkg_init.txt")
 
-    return tmpl.render(utils=convertors, terms=dictionary.global_enum_set)
+    return tmpl.render(utils=convertors, definitions=dictionary.global_enum_set)
 
 
 def gen_typeset_pkg_init(dictionary: Dictionary) -> str:

@@ -79,7 +79,7 @@ def _get_contract_term_set(contract_id: str, global_term_set: TermSet, applicabi
     return TermSet(contract_term_set)
 
 
-def _get_enum_member(obj: dict) -> EnumMember:
+def _get_enum_member(enum_identifier: str, obj: dict) -> EnumMember:
     return EnumMember(
         acronym=obj["acronym"],
         description=obj["description"],
@@ -99,7 +99,7 @@ def _get_state(obj: dict) -> Term:
             acronym=obj["acronym"],
             allowed_values=obj["allowedValues"],
             description=obj.get("description", obj["name"]),
-            enum_members=[_get_enum_member(i) for i in obj["allowedValues"]],
+            enum_members=[_get_enum_member(obj["identifier"], i) for i in obj["allowedValues"]],
             identifier=obj["identifier"],
             name=obj["name"],
             type=obj["type"]
@@ -123,10 +123,10 @@ def _get_term_set(accessor: Accessor) -> TermSet:
 def _get_term(obj: dict) -> Term:
     if obj["type"].startswith("Enum"):
         return Enum(
-            _members=[_get_enum_member(i) for i in obj["allowedValues"]],
+            _members=[_get_enum_member(obj["identifier"], i) for i in obj["allowedValues"]],
             acronym=obj["acronym"],
             allowed_values=obj["allowedValues"],
-            default=None if len(obj["default"].strip()) == 0 else obj["default"].strip(),
+            default=obj["default"],
             description=obj.get("description", obj["name"]).replace("\n", ""),
             group_id=obj["group"],
             identifier=obj["identifier"],
@@ -137,7 +137,7 @@ def _get_term(obj: dict) -> Term:
         return Term(
             acronym=obj["acronym"],
             allowed_values=obj["allowedValues"],
-            default=None if len(obj["default"].strip()) == 0 else obj["default"].strip(),
+            default=obj["default"],
             description=obj.get("description", obj["name"]).replace("\n", ""),
             group_id=obj["group"],
             identifier=obj["identifier"],

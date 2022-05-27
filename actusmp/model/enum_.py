@@ -23,7 +23,7 @@ class EnumMember():
 
     def __str__(self) -> str:
         """Instance string representation."""
-        return f"enum-member|{self.option}.{self.acronym}.{self.identifier}"
+        return f"enum-member|{self.identifier}.{self.acronym}.{self.option}"
 
     def is_match(self, identifier: str):
         """Predicate that returns true if identifier can be matched."""
@@ -62,7 +62,8 @@ class Enum(Term):
         if self.identifier == "penaltyType":
             return self.get_member("N")
         if self.identifier == "scalingEffect":
-            return self.get_member("000")
+            return self.get_member("OOO")
+
 
     def get_member(self, member_id: str) -> EnumMember:
         """Returns first member matched by identifier."""

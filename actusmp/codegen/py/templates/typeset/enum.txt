@@ -4,14 +4,14 @@
 import enum
 
 
-class {{utils.to_camel_case(term.identifier)}}(enum.Enum):
-    """{{term.acronym}} :: {{term.name}}.
+class {{utils.to_camel_case(definition.identifier)}}(enum.Enum):
+    """{{definition.acronym}} :: {{definition.name}}.
 
-    {{term.description}}
+    {{definition.description}}
 
     """
-{% for member in term %}
+{% for member in definition %}
     # {{member.name}} :: {{member.description.strip()}}
-    {{utils.to_python_enum_member(member.acronym)}} = {{member.option}}
+    {{utils.to_python_enum_member(definition, member)}} = {{member.option}}
 
 {% endfor %}

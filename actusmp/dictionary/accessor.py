@@ -1,9 +1,10 @@
 import datetime
-import typing
-
 import json
 import os
 import pathlib
+import typing
+
+from actusmp.dictionary.parser import parse
 
 
 # Path to actus-dictionary.json file.
@@ -16,7 +17,7 @@ class Accessor():
     """
     def __init__(self):
         with open(_FILE, "r") as fstream:
-            self._actus_dictionary = json.loads(fstream.read())
+            self._actus_dictionary = parse(json.loads(fstream.read()))
     
     @property
     def applicability(self) -> typing.List[dict]:

@@ -59,6 +59,9 @@ def _write_funcset_pkg_init(
     dest: pathlib.Path,
     path_to_java_funcs: pathlib.Path
 ):
+    """Writes to `pyactus.funcset.{contract}.{func_type}_{event_type}_{contract}.py`.
+    
+    """
     code_block = gen_funcset_pkg_init(dictionary, path_to_java_funcs)
     dpath = dest / "funcset"
     dpath.mkdir(parents=True, exist_ok=True)
@@ -71,7 +74,7 @@ def _write_funcset_stubs_1(
     dest: pathlib.Path,
     path_to_java_funcs: pathlib.Path
 ):
-    """Writes to `pyactus.funcs.{contract}.{func_type}_{event_type}_{contract}.py`.
+    """Writes to `pyactus.funcset.{contract}.{func_type}_{event_type}_{contract}.py`.
     
     """    
     for contract, func_type, event_type, suffix, code_block in gen_funcset_stubs_1(dictionary, path_to_java_funcs):
@@ -95,7 +98,7 @@ def _write_funcset_stubs_2(
     dictionary: Dictionary,
     dest: pathlib.Path
 ):
-    """Writes to `pyactus.funcs.{contract}.main.py`.
+    """Writes to `pyactus.funcset.{contract}.main.py`.
     
     """    
     for contract, code_block in gen_funcset_stubs_2(dictionary):
@@ -111,7 +114,7 @@ def _write_funcset_stubs_pkg_init(
     dest: pathlib.Path,
     path_to_java_funcs: pathlib.Path
 ):
-    """Writes to `pyactus.funcs.{contract}.{func_type}_{event_type}_{contract}.py`.
+    """Writes to `pyactus.funcset.{contract}.{func_type}_{event_type}_{contract}.py`.
     
     """    
     for contract, code_block in gen_funcset_stubs_pkg_init(dictionary, path_to_java_funcs):
