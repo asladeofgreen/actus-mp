@@ -49,7 +49,7 @@ class ContractTypeInfo():
 
     def __str__(self) -> str:
         """Instance string representation."""
-        return f"contract|{self.acronym}..{self.identifier}|{len(self.term_set)}"
+        return f"contract-type|{self.acronym}..{self.identifier}"
 
 
 @dataclasses.dataclass

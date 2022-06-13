@@ -8,7 +8,7 @@ class ApplicableContractTermInfo():
     
     """
     # Identifier of associated contract type.
-    contract_id: str
+    contract_type_id: str
 
     # Identifier of associated term.
     term_id: str
@@ -18,12 +18,12 @@ class ApplicableContractTermInfo():
 
     def __str__(self) -> str:
         """Instance string representation."""
-        return f"applicability-item|{self.contract_id}|{self.term_id}|{self.info}"
+        return f"applicability-item|{self.contract_type_id}|{self.term_id}|{self.info}"
 
     @property
     def sort_key(self):
         """A key used in sorting scenarios."""
-        return f"{self.contract_id}|{self.term_id}"
+        return f"{self.contract_type_id}|{self.term_id}"
 
 
 @dataclasses.dataclass
@@ -48,4 +48,4 @@ class Applicability():
 
     def get_set_by_contract_id(self, contract_id: str) -> typing.List[ApplicableContractTermInfo]:
         """Returns set of items matched by contract type identifier."""
-        return [i for i in self if i.contract_id == contract_id]
+        return [i for i in self if i.contract_type_id == contract_id]

@@ -13,6 +13,9 @@ from actusmp.model import Enum
 
 from actusmp.model1 import Applicability
 from actusmp.model1 import ApplicableTermInfo
+from actusmp.model1 import Contract
+from actusmp.model1 import ContractSet
+from actusmp.model1 import ContractTerm
 from actusmp.model1 import Dictionary
 from actusmp.model1 import Enum
 from actusmp.model1 import EnumMember
@@ -31,15 +34,20 @@ def get_dictionary() -> Dictionary:
     
     """
     accessor = Accessor()
+    applicability=_get_applicability(accessor)
+    taxonomy=_get_taxonomy(accessor)
+    term_set=_get_term_set(accessor)
+
+    contract_set = _get_contract_set(accessor, applicability, taxonomy, term_set)
 
     return Dictionary(
-        applicability=_get_applicability(accessor),
+        applicability=applicability,
         contract_event_type=_get_enum(accessor.contract_event_type),
         contract_reference_role=_get_enum(accessor.contract_reference_role),
         contract_reference_type=_get_enum(accessor.contract_reference_type),
         state_set=_get_state_set(accessor),
-        taxonomy=_get_taxonomy(accessor),
-        term_set=_get_term_set(accessor),
+        taxonomy=taxonomy,
+        term_set=term_set,
         version=accessor.version,
         version_date=accessor.version_date
         )
@@ -69,13 +77,51 @@ def _get_applicability(accessor: Accessor) -> Applicability:
                 continue            
             items.append(
                 ApplicableTermInfo(
-                    contract_id=contract_id,
+                    contract_type_id=contract_id,
                     term_id=term_id,
                     term_instruction=term_instruction
                 )
             )
 
     return Applicability(items)
+
+
+def _get_contract_set(
+    accessor: Accessor,
+    applicability: Applicability,
+    taxonomy: Taxonomy,
+    term_set: TermSet
+    ) -> ContractSet:
+    """Decodes set of derived contract declarations.
+    
+    """
+    def _map_contract_termset(contract_type_info: ContractTypeInfo) -> Contract:
+        termset = []
+        for applicable_term_info in applicability.get_applicable_termset(contract_type_info):
+            term_defn = term_set.get_term(applicable_term_info.term_id)
+            termset.append(ContractTerm(
+                    acronym=term_defn.acronym,
+                    allowed_values=term_defn.allowed_values,
+                    default=term_defn.default,
+                    description=term_defn.description,
+                    group_id=term_defn.group_id,
+                    identifier=term_defn.identifier,
+                    is_array=term_defn.is_array,
+                    name=term_defn.name,
+                    scalar_type=term_defn.scalar_type
+                ))
+        
+        return termset
+
+    def _map_contract(contract_type_info: ContractTypeInfo) -> Contract:
+        return Contract(
+            term_set=_map_contract_termset(contract_type_info),
+            type_info=contract_type_info,
+        )
+
+    return ContractSet(
+        list(map(lambda i: _map_contract(i), taxonomy))
+        )
 
 
 def _get_enum(obj: dict) -> EnumMember:
@@ -244,11 +290,6 @@ def _get_term(obj: dict, prefix: str = "") -> Term:
             scalar_type=obj["type"]
         )
 
-
-
-
-
-
 def _get_contract(obj: dict, global_term_set: TermSet, applicability: Applicability) -> Contract:
     return Contract(
         acronym=obj["acronym"],
@@ -263,30 +304,13 @@ def _get_contract(obj: dict, global_term_set: TermSet, applicability: Applicabil
     )
 
 
-def _get_contract_set(accessor: Accessor, global_term_set: TermSet, applicability: Applicability) -> ContractSet:
-    return ContractSet(
-        list(map(lambda i: _get_contract(i, global_term_set, applicability), accessor.contract_type_set))
-        )
+def _get_contract_term_set(contract_id: str, applicability: Applicability, term_set: TermSet) -> Contract:
+    print(contract_id)
 
-
-
-def _get_contract_term_set(contract_id: str, global_term_set: TermSet, applicability: Applicability) -> Contract:
     contract_term_set = []
-    for applicability_item in applicability.get_set_by_contract_id(contract_id):
-        for term in global_term_set:
-            if term.identifier == applicability_item.term_id:
+    for info in applicability.get_applicable_termset(contract_id):
+        for term in term_set:
+            if term.identifier == info.term_id:
                 contract_term_set.append(term)
 
     return TermSet(contract_term_set)
-
-
-def _get_enum_member1(enum_identifier: str, obj: dict) -> EnumMember:
-    return EnumMember(
-        acronym=obj["acronym"],
-        description=obj["description"],
-        identifier=obj["identifier"],
-        name=obj["name"],
-        option=int(obj["option"]),
-    )
-
-

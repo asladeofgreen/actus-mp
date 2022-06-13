@@ -17,44 +17,44 @@ class Accessor():
     """
     def __init__(self):
         with open(_FILE, "r") as fstream:
-            self._actus_dictionary = parse(json.loads(fstream.read()))
-    
+            self._obj: dict = parse(json.loads(fstream.read()))
+
     @property
     def applicability(self) -> typing.List[dict]:
-        return self._actus_dictionary["applicability"].items()
+        return self._obj["applicability"].items()
 
     @property
     def contract_event_type(self) -> dict:
-        return self._actus_dictionary["event"]["eventType"]
+        return self._obj["event"]["eventType"]
 
     @property
     def contract_type_set(self) -> typing.List[dict]:
-        return self._actus_dictionary["taxonomy"].values()
+        return self._obj["taxonomy"].keys()
 
     @property
     def contract_reference_role(self) -> dict:
-        return self._actus_dictionary["contractReference"]["role"]
+        return self._obj["contractReference"]["role"]
 
     @property
     def contract_reference_type(self) -> dict:
-        return self._actus_dictionary["contractReference"]["type"]
+        return self._obj["contractReference"]["type"]
 
     @property
     def state_set(self) -> typing.List[dict]:
-        return self._actus_dictionary["states"].values()
+        return self._obj["states"].values()
 
     @property
     def taxonomy(self) -> typing.List[dict]:
-        return self._actus_dictionary["taxonomy"].values()
+        return self._obj["taxonomy"].values()
 
     @property
     def term_set(self) -> typing.List[dict]:
-        return self._actus_dictionary["terms"].values()
+        return self._obj["terms"].values()
 
     @property
     def version(self) -> str:
-        return self._actus_dictionary["version"]["Version"]
+        return self._obj["version"]["Version"]
 
     @property
     def version_date(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self._actus_dictionary["version"]["Date"])
+        return datetime.datetime.fromisoformat(self._obj["version"]["Date"])

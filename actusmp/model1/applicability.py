@@ -1,6 +1,8 @@
 import dataclasses
 import typing
 
+from actusmp.model1.taxonomy import ContractTypeInfo
+
 
 @dataclasses.dataclass
 class ApplicableTermInfo():
@@ -8,7 +10,7 @@ class ApplicableTermInfo():
     
     """
     # Identifier of associated contract type.
-    contract_id: str
+    contract_type_id: str
 
     # Identifier of associated term.
     term_id: str
@@ -18,12 +20,12 @@ class ApplicableTermInfo():
 
     def __str__(self) -> str:
         """Instance string representation."""
-        return f"applicability-item|{self.contract_id}|{self.term_id}|{self.term_instruction}"
+        return f"applicability-item|{self.contract_type_id}|{self.term_id}|{self.term_instruction}"
 
     @property
     def sort_key(self):
         """A key used in sorting scenarios."""
-        return f"{self.contract_id}|{self.term_id}"
+        return f"{self.contract_type_id}|{self.term_id}"
 
 
 @dataclasses.dataclass
@@ -46,8 +48,8 @@ class Applicability():
         """Instance string representation."""
         return f"applicability|{len(self)}"
 
-    def get_applicable_terms(self, contract_id: str) -> typing.List[ApplicableTermInfo]:
-        """Returns set of items matched by contract type identifier.
+    def get_applicable_termset(self, type_info: ContractTypeInfo) -> typing.List[ApplicableTermInfo]:
+        """Returns set of items matched by contract type.
         
         """
-        return [i for i in self if i.contract_id == contract_id]
+        return [i for i in self if i.contract_type_id == type_info.identifier]

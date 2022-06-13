@@ -24,14 +24,14 @@ class Term():
     # Identifier of associated group, e.g. 'Interest'
     group_id: str
 
+    # Formal term identifier, e.g. 'accruedInterest'.
+    identifier: str
+
     # Flag indicating whether the term declares an array or not.
     is_array: bool
 
     # Term name, e.g. 'Accrued Interest'.
     name: str
-
-    # Formal term identifier, e.g. 'accruedInterest'.
-    identifier: str
 
     # Associated scalar data type, e.g. Timestamp | Real | Enum ... etc.
     scalar_type: ScalarType
