@@ -21,7 +21,7 @@ class Accessor():
     
     @property
     def applicability(self) -> typing.List[dict]:
-        return self._actus_dictionary["applicability"].values()
+        return self._actus_dictionary["applicability"].items()
 
     @property
     def contract_event_type(self) -> dict:

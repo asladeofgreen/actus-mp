@@ -11,7 +11,8 @@ from actusmp.model import Enum
 # from actusmp.model import State
 # from actusmp.model import StateSet
 
-from actusmp.model1 import ContractReferenceInfo
+from actusmp.model1 import Applicability
+from actusmp.model1 import ApplicableTermInfo
 from actusmp.model1 import Dictionary
 from actusmp.model1 import Enum
 from actusmp.model1 import EnumMember
@@ -32,6 +33,7 @@ def get_dictionary() -> Dictionary:
     accessor = Accessor()
 
     return Dictionary(
+        applicability=_get_applicability(accessor),
         contract_event_type=_get_enum(accessor.contract_event_type),
         contract_reference_role=_get_enum(accessor.contract_reference_role),
         contract_reference_type=_get_enum(accessor.contract_reference_type),
@@ -54,6 +56,26 @@ def get_dictionary() -> Dictionary:
         version=accessor.version,
         version_date=accessor.version_date
     )
+
+
+def _get_applicability(accessor: Accessor) -> Applicability:
+    """Decodes applicability declarations.
+    
+    """    
+    items = []
+    for contract_id, applicable_terms in accessor.applicability:
+        for term_id, term_instruction in applicable_terms.items():
+            if term_id == "contract":
+                continue            
+            items.append(
+                ApplicableTermInfo(
+                    contract_id=contract_id,
+                    term_id=term_id,
+                    term_instruction=term_instruction
+                )
+            )
+
+    return Applicability(items)
 
 
 def _get_enum(obj: dict) -> EnumMember:
@@ -224,22 +246,7 @@ def _get_term(obj: dict, prefix: str = "") -> Term:
 
 
 
-def _get_applicability(accessor: Accessor) -> Applicability:
-    items = []
-    for obj in accessor.applicability:
-        contract_id = obj["contract"]
-        for term_id, info in obj.items():
-            if term_id == "contract":
-                continue
-            items.append(
-                ApplicableContractTermInfo(
-                    contract_id=contract_id,
-                    term_id=term_id,
-                    info=info
-                )
-            )
 
-    return Applicability(items)
 
 
 def _get_contract(obj: dict, global_term_set: TermSet, applicability: Applicability) -> Contract:

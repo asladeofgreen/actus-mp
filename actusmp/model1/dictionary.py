@@ -2,7 +2,7 @@ import dataclasses
 import datetime
 import typing
 
-from actusmp.model1.contract_reference import ContractReferenceInfo
+from actusmp.model1.applicability import Applicability
 from actusmp.model1.enum_ import Enum
 from actusmp.model1.states import StateSet
 from actusmp.model1.taxonomy import Taxonomy
@@ -14,6 +14,9 @@ class Dictionary():
     """An information set by which the ACTUS standard is declared.
     
     """
+    # Criteria that determine which set of terms are associated with which type of contract. 
+    applicability: Applicability
+    
     # Enumeration over set Intra-contract reference information.
     contract_reference_role: Enum
 

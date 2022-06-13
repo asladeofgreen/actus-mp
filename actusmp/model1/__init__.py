@@ -1,4 +1,5 @@
-from actusmp.model1.contract_reference import ContractReferenceInfo
+from actusmp.model1.applicability import Applicability
+from actusmp.model1.applicability import ApplicableTermInfo
 from actusmp.model1.dictionary import Dictionary
 from actusmp.model1.enum_ import Enum
 from actusmp.model1.enum_ import EnumMember
