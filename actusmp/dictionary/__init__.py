@@ -1,1 +1,1 @@
-from actusmp.dictionary.mapper import get_dictionary
+from actusmp.dictionary.factory import get_dictionary

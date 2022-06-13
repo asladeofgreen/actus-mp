@@ -10,7 +10,7 @@ def to_python_type(term: Term) -> str:
     """
     def _map(typedef: str):
         if typedef == "ContractReference":
-            return "auxiliary.ContractReference"
+            return "contracts.ContractReference"
         elif typedef == "Cycle":
             return "auxiliary.Cycle"
         elif typedef == "Enum":

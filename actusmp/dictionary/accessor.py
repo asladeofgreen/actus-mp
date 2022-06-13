@@ -24,12 +24,28 @@ class Accessor():
         return self._actus_dictionary["applicability"].values()
 
     @property
+    def contract_event_type(self) -> dict:
+        return self._actus_dictionary["event"]["eventType"]
+
+    @property
     def contract_type_set(self) -> typing.List[dict]:
         return self._actus_dictionary["taxonomy"].values()
 
     @property
+    def contract_reference_role(self) -> dict:
+        return self._actus_dictionary["contractReference"]["role"]
+
+    @property
+    def contract_reference_type(self) -> dict:
+        return self._actus_dictionary["contractReference"]["type"]
+
+    @property
     def state_set(self) -> typing.List[dict]:
         return self._actus_dictionary["states"].values()
+
+    @property
+    def taxonomy(self) -> typing.List[dict]:
+        return self._actus_dictionary["taxonomy"].values()
 
     @property
     def term_set(self) -> typing.List[dict]:

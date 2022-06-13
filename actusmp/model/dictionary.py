@@ -1,8 +1,10 @@
 import dataclasses
 import datetime
+import typing
 
 from actusmp.model.applicability import Applicability
 from actusmp.model.contract import ContractSet
+from actusmp.model.enum_ import Enum
 from actusmp.model.term import TermSet
 from actusmp.model.states import StateSet
 
@@ -15,12 +17,16 @@ class Dictionary():
     # Criteria that determine which set of terms are associated with which type of contract. 
     applicability: Applicability
 
+    # Set of associated contract reference enums.
+    contract_reference_enum_set: typing.List[Enum]
+
     # Set of associated contract types.
     contract_set: ContractSet
 
     # Global set of associated contract terms.
     global_term_set: TermSet
 
+    # Set of states through which a contract may pass during it's lifetime.
     state_set: StateSet
 
     # Semantic version.

@@ -1,13 +1,15 @@
 # **********************************
 # N.B. Auto-generated using actus-mp
 # **********************************
-from pyactus.typeset.auxiliary import ContractReference
 from pyactus.typeset.auxiliary import Cycle
 from pyactus.typeset.auxiliary import Period
 from pyactus.typeset.contracts import Contract
 from pyactus.typeset.contracts import ContractExecutionProof
 from pyactus.typeset.contracts import ContractIdentifier
 from pyactus.typeset.contracts import ContractLifeCycleEpisode
+from pyactus.typeset.contracts import ContractReference
+from pyactus.typeset.contracts import ContractReferenceRole
+from pyactus.typeset.contracts import ContractReferenceType
 from pyactus.typeset.contracts import ContractTermset
 from pyactus.typeset.enums import ENUM_SET
 {% for enum in dictionary.global_enum_set %}

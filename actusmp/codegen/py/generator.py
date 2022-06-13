@@ -35,6 +35,8 @@ def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
     tmpl = get_template("typeset/enum.txt")
     for definition in dictionary.global_enum_set:
         yield definition, tmpl.render(utils=convertors, definition=definition)
+    for definition in dictionary.contract_reference_enum_set:
+        yield definition, tmpl.render(utils=convertors, definition=definition)
 
 
 def gen_typeset_enums_pkg_init(dictionary: Dictionary) -> str:
