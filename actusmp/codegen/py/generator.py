@@ -7,14 +7,14 @@ from actusmp.model import Dictionary
 from actusmp.model import FunctionType
 from actusmp.model import Term
 from actusmp.codegen.py import convertors
-from actusmp.codegen.templates import get_template
+from actusmp.utils import fsystem
 
 
 def gen_typeset_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     """Generates: `pyactus.typeset.terms.{contract}.py`.
     
     """
-    tmpl = get_template("typeset/termset.txt")
+    tmpl = fsystem.get_template("typeset/termset.txt")
     for contract in [i for i in dictionary.contract_set if i.term_set]:
         yield contract, tmpl.render(utils=convertors, contract=contract)
 
@@ -23,7 +23,7 @@ def gen_typeset_termsets_pkg_init(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.terms.__init__.py`.
     
     """
-    tmpl = get_template("typeset/termsets_pkg_init.txt")
+    tmpl = fsystem.get_template("typeset/termsets_pkg_init.txt")
 
     return tmpl.render(utils=convertors, dictionary=dictionary)
 
@@ -32,7 +32,7 @@ def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
     """Generates: `pyactus.typeset.enums.{enums}.py`.
     
     """
-    tmpl = get_template("typeset/enum.txt")
+    tmpl = fsystem.get_template("typeset/enum.txt")
     for definition in dictionary.global_enum_set:
         yield definition, tmpl.render(utils=convertors, definition=definition)
     for definition in dictionary.contract_reference_enum_set:
@@ -43,7 +43,7 @@ def gen_typeset_enums_pkg_init(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.enums.__init__.py`.
     
     """
-    tmpl = get_template("typeset/enum_pkg_init.txt")
+    tmpl = fsystem.get_template("typeset/enum_pkg_init.txt")
 
     return tmpl.render(utils=convertors, definitions=dictionary.global_enum_set)
 
@@ -52,7 +52,7 @@ def gen_typeset_pkg_init(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.__init__.py`.
     
     """
-    tmpl = get_template("typeset/pkg_init.txt")
+    tmpl = fsystem.get_template("typeset/pkg_init.txt")
 
     return tmpl.render(utils=convertors, dictionary=dictionary)
 
@@ -61,7 +61,7 @@ def gen_typeset_states(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.states.py`.
     
     """
-    tmpl = get_template("typeset/states.txt")
+    tmpl = fsystem.get_template("typeset/states.txt")
 
     return tmpl.render(utils=convertors, dictionary=dictionary)
 
@@ -70,7 +70,7 @@ def gen_funcset_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathlib.Pat
     """Generates: `pyactus.typeset.classes.{contract}.py`.
     
     """
-    tmpl = get_template("funcset/pkg_init.txt")
+    tmpl = fsystem.get_template("funcset/pkg_init.txt")
 
     return tmpl.render(dictionary=dictionary, utils=convertors)
 
@@ -80,8 +80,8 @@ def gen_funcset_stubs_1(dictionary: Dictionary, path_to_java_funcs: pathlib.Path
     
     """
     tmpl_set = {
-        FunctionType.POF: get_template("funcset/stub_pof.txt"),
-        FunctionType.STF: get_template("funcset/stub_stf.txt")
+        FunctionType.POF: fsystem.get_template("funcset/stub_pof.txt"),
+        FunctionType.STF: fsystem.get_template("funcset/stub_stf.txt")
     }
 
     iterator = _yield_funcset(dictionary, path_to_java_funcs)
@@ -94,7 +94,7 @@ def gen_funcset_stubs_2(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     """Generates: `pyactus.funcs.{contract}.main.py`.
     
     """
-    tmpl = get_template("funcset/stub_main.txt")
+    tmpl = fsystem.get_template("funcset/stub_main.txt")
 
     for contract in [i for i in dictionary.contract_set if i.term_set]:
         code_block = tmpl.render(utils=convertors, contract=contract)
@@ -105,7 +105,7 @@ def gen_funcset_stubs_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathl
     """Generates: `pyactus.funcs.{contract}.__init__.py`.
     
     """
-    tmpl = get_template("funcset/stub_pkg_init.txt")
+    tmpl = fsystem.get_template("funcset/stub_pkg_init.txt")
 
     for contract in [i for i in dictionary.contract_set if i.term_set]:
         funcset_iterator = _yield_funcset(dictionary, path_to_java_funcs, contract)

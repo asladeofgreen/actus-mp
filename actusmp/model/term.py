@@ -1,6 +1,8 @@
 import dataclasses
 import typing
 
+from actusmp.model.scalar_type import ScalarType
+
 
 @dataclasses.dataclass
 class Term():
@@ -22,23 +24,21 @@ class Term():
     # Identifier of associated group, e.g. 'Interest'
     group_id: str
 
-    # Term name, e.g. 'Accrued Interest'.
-    name: str
-
     # Formal term identifier, e.g. 'accruedInterest'.
     identifier: str
 
-    # Associated term data type, e.g. Timestamp | Real | Enum.
-    type: str
+    # Flag indicating whether the term declares an array or not.
+    is_array: bool
+
+    # Term name, e.g. 'Accrued Interest'.
+    name: str
+
+    # Associated scalar data type, e.g. Timestamp | Real | Enum ... etc.
+    scalar_type: ScalarType
 
     def __str__(self) -> str:
         """Instance string representation."""
         return f"term|{self.identifier}"
-
-    @property
-    def is_array_type(self):
-        """Return flag indicating whether the term is an array or not."""
-        return self.type.endswith("[]")
 
 
 @dataclasses.dataclass
@@ -74,4 +74,4 @@ class TermSet():
     @property
     def enum_set(self):
         """Returns sub-set of terms that are enumerations."""
-        return TermSet([i for i in self if i.type.startswith("Enum")])
+        return TermSet([i for i in self if i.scalar_type == ScalarType.Enum])

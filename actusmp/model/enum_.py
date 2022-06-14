@@ -1,11 +1,12 @@
 import dataclasses
 import typing
 
-from actusmp.model.term import Term
-
 
 @dataclasses.dataclass
 class EnumMember():
+    """Member of an enumerated type.
+    
+    """
     # A short identifier, e.g. 'SCF'.
     acronym: str
 
@@ -14,6 +15,9 @@ class EnumMember():
 
     # A canonical identifier within enumeration scope.
     identifier: str
+
+    # Flag indicating whether member is enumeration scope default.
+    is_default: typing.Optional[bool]
 
     # A formal name within enumeration scope.
     name: str
@@ -31,17 +35,32 @@ class EnumMember():
 
 
 @dataclasses.dataclass
-class Enum(Term):
+class Enum():
+    """An enumerated type that encloses a constrained set of members.
+    
+    """
+    # Upper case 3/4 character type identifier, e.g. 'IPAC'.
+    acronym: str
+
+    # Fuller description of term's raison d'etre.    
+    description: str
+
+    # Term name, e.g. 'Accrued Interest'.
+    name: str
+
+    # Formal term identifier, e.g. 'accruedInterest'.
+    identifier: str
+
     # Collection of associated enumeration members.
-    _members: typing.List[EnumMember] 
+    members: typing.List[EnumMember] 
 
     def __iter__(self) -> typing.Iterator[EnumMember]:
         """Instance iterator."""
-        return iter(sorted(self._members, key=lambda i: i.option))    
+        return iter(sorted(self.members, key=lambda i: i.option))    
 
     def __len__(self) -> int:
         """Instance iterator length."""
-        return len(self._members)
+        return len(self.members)
 
     def __str__(self) -> str:
         """Instance string representation."""

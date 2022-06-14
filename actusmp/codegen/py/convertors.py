@@ -1,5 +1,6 @@
 from actusmp.model import Enum
 from actusmp.model import EnumMember
+from actusmp.model import ScalarType
 from actusmp.model import Term
 from actusmp.utils.convertors import *
 
@@ -8,28 +9,28 @@ def to_python_type(term: Term) -> str:
     """Maps an Actus term's type to it's pythonic equivalent.
     
     """
-    def _map(typedef: str):
-        if typedef == "ContractReference":
+    def _map(typedef: ScalarType):
+        if typedef == ScalarType.ContractReference:
             return "contracts.ContractReference"
-        elif typedef == "Cycle":
+        elif typedef == ScalarType.Cycle:
             return "auxiliary.Cycle"
-        elif typedef == "Enum":
+        elif typedef == ScalarType.Enum:
             return f"enums.{to_camel_case(term.identifier)}"
-        elif typedef == "Period":
+        elif typedef == ScalarType.Period:
             return "auxiliary.Period"
-        elif typedef == "Real":
+        elif typedef == ScalarType.Real:
             return "float"
-        elif typedef == "Timestamp":
+        elif typedef == ScalarType.Timestamp:
             return "datetime.datetime"
-        elif typedef == "Varchar":
+        elif typedef == ScalarType.Varchar:
             return "str"
         else:
-            raise ValueError(f"Unsupported term type: {term.type}")        
+            raise ValueError(f"Unsupported term scalar type: {term.scalar_type} :: {typedef}")        
 
-    if term.type.endswith("[]"):
-        return f"typing.List[{_map(term.type[:-2])}]"
+    if term.is_array:
+        return f"typing.List[{_map(term.scalar_type)}]"
     else:
-        return _map(term.type)
+        return _map(term.scalar_type)
 
 
 def to_python_default(term: Term) -> str:
@@ -37,17 +38,17 @@ def to_python_default(term: Term) -> str:
     
     """
     if term.default:
-        if term.type == "Enum":
-            return f"enums.{to_camel_case(term.identifier)}.{to_python_enum_member_1(term.default_member)}"
-        elif term.type == "Period":
+        if term.scalar_type == ScalarType.Enum:
+            return f"enums.{to_camel_case(term.identifier)}.{term.acronym}"
+        elif term.scalar_type == ScalarType.Period:
             return "None"
-        elif term.type == "Real":
+        elif term.scalar_type == ScalarType.Real:
             try:
                 return float(term.default)
             except:
                 return float(0)
 
-        return f"'TODO: format {term.type} :: {term.default}'"
+        return f"'TODO: format {term.scalar_type} :: {term.default}'"
 
 
 def to_python_enum_member(definition: Enum, member: EnumMember) -> str:

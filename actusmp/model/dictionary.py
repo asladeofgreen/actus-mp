@@ -5,8 +5,9 @@ import typing
 from actusmp.model.applicability import Applicability
 from actusmp.model.contract import ContractSet
 from actusmp.model.enum_ import Enum
+from actusmp.model.state import StateSet
+from actusmp.model.taxonomy import Taxonomy
 from actusmp.model.term import TermSet
-from actusmp.model.states import StateSet
 
 
 @dataclasses.dataclass
@@ -16,18 +17,27 @@ class Dictionary():
     """
     # Criteria that determine which set of terms are associated with which type of contract. 
     applicability: Applicability
+    
+    # Enumeration over set of contract event types.
+    contract_event_type: Enum
 
-    # Set of associated contract reference enums.
-    contract_reference_enum_set: typing.List[Enum]
+    # Enumeration over set Intra-contract reference information.
+    contract_reference_role: Enum
 
-    # Set of associated contract types.
+    # Intra-contract reference information.
+    contract_reference_type: Enum
+
+    # Set of supported financial contracts.
     contract_set: ContractSet
-
-    # Global set of associated contract terms.
-    global_term_set: TermSet
 
     # Set of states through which a contract may pass during it's lifetime.
     state_set: StateSet
+
+    # Declaration of supported contract types.
+    taxonomy: Taxonomy
+    
+    # Set of declared contract terms.
+    term_set: TermSet
 
     # Semantic version.
     version: str
@@ -38,15 +48,3 @@ class Dictionary():
     def __str__(self) -> str:
         """Instance string representation."""
         return f"{self.version}|{self.version_date}"
-
-    @property
-    def global_enum_set(self):
-        """Global set of associated contract terms that are enumerations."""
-        return self.global_term_set.enum_set
-
-    @property
-    def applicable_contracts(self):
-        """Set of contracts that are deemed applicable, i.e. have 
-           non-empty associated term sets."""
-        for contract in [i for i in self.contract_set if i.term_set]:
-            yield contract

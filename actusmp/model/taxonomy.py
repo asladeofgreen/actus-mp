@@ -3,7 +3,7 @@ import enum
 import typing
 
 
-class PublicationStatus(enum.Enum):
+class ContractTypePublicationStatus(enum.Enum):
     """Current publication status of contract type.
 
     """
@@ -41,7 +41,7 @@ class ContractTypeInfo():
     name: str
     
     # Publication status, e.g. 'Released'.
-    publication_status: PublicationStatus
+    publication_status: ContractTypePublicationStatus
     
     def __hash__(self):
         """Instance hash representation."""

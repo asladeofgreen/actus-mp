@@ -1,7 +1,7 @@
 import dataclasses
 import typing
 
-from actusmp.model.enum_ import EnumMember
+from actusmp.model.scalar_type import ScalarType
 
 
 @dataclasses.dataclass
@@ -18,17 +18,14 @@ class State():
     # Description of state field, e.g. 'The multiplier being applied to principal cash flows'.
     description: str
 
-    # Set of associated enumeration members.
-    enum_members: typing.List[EnumMember] 
+    # Formal state field identifier, e.g. 'statusDate'.
+    identifier: str
 
     # Formal state field name, e.g. 'Status Date'.
     name: str
 
-    # Formal state field identifier, e.g. 'statusDate'.
-    identifier: str
-
-    # Associated field data type, e.g. Timestamp | Real | Enum.
-    type: str
+    # Associated scalar data type, e.g. Timestamp | Real | Enum ... etc.
+    scalar_type: ScalarType
 
     def __str__(self) -> str:
         """Instance string representation."""

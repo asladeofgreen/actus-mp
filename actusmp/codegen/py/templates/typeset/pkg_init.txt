@@ -19,6 +19,6 @@ from pyactus.typeset.events import Event
 from pyactus.typeset.events import EventType
 from pyactus.typeset.termsets import CONTRACT_TERMSETS
 {% for contract in dictionary.applicable_contracts %}
-from pyactus.typeset.termsets import TermsetOf{{utils.to_camel_case(contract.identifier)}}
+from pyactus.typeset.termsets import TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}}
 {% endfor %}
 from pyactus.typeset.states import StateSpace

@@ -11,7 +11,7 @@ from pyactus.typeset import contracts
 
 
 @dataclasses.dataclass
-class TermsetOf{{utils.to_camel_case(contract.identifier)}}(contracts.ContractTermset):
+class TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}}(contracts.ContractTermset):
     """Set of applicable terms: {{contract.acronym}} -> {{contract.name}}.
 
     {{contract.description}}
