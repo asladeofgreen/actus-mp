@@ -90,10 +90,7 @@ def _write_funcset_stubs_1(
         fsystem.write(fpath, code_block)
 
 
-def _write_funcset_stubs_2(
-    dictionary: Dictionary,
-    dest: pathlib.Path
-):
+def _write_funcset_stubs_2(dictionary: Dictionary, dest: pathlib.Path):
     """Writes to `pyactus.funcset.{contract}.main.py`.
     
     """    
@@ -119,7 +116,7 @@ def _write_funcset_stubs_pkg_init(
         fsystem.write(fpath, code_block)
 
 
-def _write_typeset_dirs(dictionary: Dictionary, dest: pathlib.Path):
+def _write_typeset_dirs(_: Dictionary, dest: pathlib.Path):
     """Writes directories to `pyactus.typeset`.
     
     """

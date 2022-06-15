@@ -50,9 +50,11 @@ class Dictionary():
         return f"{self.version}|{self.version_date}"
 
     @property
-    def contract_reference_enum_set(self) -> typing.Set:
-        """Set of associated contract reference enumerations."""
-        return set([self.contract_reference_role, self.contract_reference_type])
+    def active_contract_set(self) -> typing.Generator:
+        """Returns set of active contracts - i.e. those with applicable terms."""
+        for contract in self.contract_set:
+            if contract.term_set:
+                yield contract
 
     @property
     def enum_set(self) -> typing.Generator:

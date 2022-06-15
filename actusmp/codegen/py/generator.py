@@ -15,7 +15,7 @@ def gen_typeset_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     
     """
     tmpl = fsystem.get_template("typeset/termset.txt")
-    for contract in [i for i in dictionary.contract_set if i.term_set]:
+    for contract in dictionary.active_contract_set:
         yield contract, tmpl.render(utils=convertors, contract=contract)
 
 
@@ -94,7 +94,7 @@ def gen_funcset_stubs_2(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     """
     tmpl = fsystem.get_template("funcset/stub_main.txt")
 
-    for contract in [i for i in dictionary.contract_set if i.term_set]:
+    for contract in dictionary.active_contract_set:
         code_block = tmpl.render(utils=convertors, contract=contract)
         yield contract, code_block
 
@@ -105,7 +105,7 @@ def gen_funcset_stubs_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathl
     """
     tmpl = fsystem.get_template("funcset/stub_pkg_init.txt")
 
-    for contract in [i for i in dictionary.contract_set if i.term_set]:
+    for contract in dictionary.active_contract_set:
         funcset_iterator = _yield_funcset(dictionary, path_to_java_funcs, contract)
         code_block = tmpl.render(utils=convertors, contract=contract, funcset_iterator=funcset_iterator)
         if len(code_block) > 0:
@@ -124,7 +124,7 @@ def _yield_funcset(
     function is named: {func-type}_{event-type}_{contract-type}.java.
 
     """
-    for contract in [i for i in dictionary.contract_set if i.term_set]:
+    for contract in dictionary.active_contract_set:
         if filter and filter != contract:
             continue
         path_to_java_funcs_contract = path_to_java_funcs / contract.type_info.acronym.lower()
