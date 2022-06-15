@@ -40,6 +40,11 @@ class Term():
         """Instance string representation."""
         return f"term|{self.identifier}"
 
+    @property
+    def is_enum(self):
+        """Returns flag indicating whether the term field type is an enumeration."""
+        return self.scalar_type == ScalarType.Enum
+
 
 @dataclasses.dataclass
 class TermSet():

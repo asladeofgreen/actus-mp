@@ -121,6 +121,7 @@ def _get_state_set(accessor: Accessor) -> StateSet:
     """
     def _map_allowed_value(scalar_type: ScalarType, value: typing.Union[str, dict]):
         if scalar_type == ScalarType.Enum:
+            return _get_enum_member(value)
             return EnumMember(
                 acronym=value["acronym"],
                 description=value["description"],
@@ -139,6 +140,7 @@ def _get_state_set(accessor: Accessor) -> StateSet:
             allowed_values=[_map_allowed_value(scalar_type, i) for i in obj["allowedValues"]],
             description=obj["description"],
             identifier=obj["identifier"],
+            is_array=False,
             name=obj["name"],
             scalar_type=scalar_type
         )

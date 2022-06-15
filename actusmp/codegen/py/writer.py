@@ -81,7 +81,7 @@ def _write_funcset_stubs_1(
     
     """    
     for contract, func_type, event_type, suffix, code_block in gen_funcset_stubs_1(dictionary, path_to_java_funcs):
-        dpath = dest / "funcset" / contract.acronym.lower()
+        dpath = dest / "funcset" / contract.type_info.acronym.lower()
         dpath.mkdir(parents=True, exist_ok=True)
         if suffix != "":
             fpath = dpath / f"{func_type.name.lower()}_{event_type.lower()}_{suffix}.py"
@@ -98,7 +98,7 @@ def _write_funcset_stubs_2(
     
     """    
     for contract, code_block in gen_funcset_stubs_2(dictionary):
-        dpath = dest / "funcset" / contract.acronym.lower()
+        dpath = dest / "funcset" / contract.type_info.acronym.lower()
         dpath.mkdir(parents=True, exist_ok=True)
         fpath = dpath / "main.py"
         fsystem.write(fpath, code_block)
@@ -113,7 +113,7 @@ def _write_funcset_stubs_pkg_init(
     
     """    
     for contract, code_block in gen_funcset_stubs_pkg_init(dictionary, path_to_java_funcs):
-        dpath = dest / "funcset" / contract.acronym.lower()
+        dpath = dest / "funcset" / contract.type_info.acronym.lower()
         dpath.mkdir(parents=True, exist_ok=True)
         fpath = dpath / "__init__.py"
         fsystem.write(fpath, code_block)

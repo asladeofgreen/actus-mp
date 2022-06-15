@@ -33,9 +33,7 @@ def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
     
     """
     tmpl = fsystem.get_template("typeset/enum.txt")
-    for definition in dictionary.global_enum_set:
-        yield definition, tmpl.render(utils=convertors, definition=definition)
-    for definition in dictionary.contract_reference_enum_set:
+    for definition in dictionary.enum_set:
         yield definition, tmpl.render(utils=convertors, definition=definition)
 
 
@@ -45,7 +43,7 @@ def gen_typeset_enums_pkg_init(dictionary: Dictionary) -> str:
     """
     tmpl = fsystem.get_template("typeset/enum_pkg_init.txt")
 
-    return tmpl.render(utils=convertors, definitions=dictionary.global_enum_set)
+    return tmpl.render(utils=convertors, definitions=dictionary.enum_set)
 
 
 def gen_typeset_pkg_init(dictionary: Dictionary) -> str:
@@ -129,7 +127,7 @@ def _yield_funcset(
     for contract in [i for i in dictionary.contract_set if i.term_set]:
         if filter and filter != contract:
             continue
-        path_to_java_funcs_contract = path_to_java_funcs / contract.acronym.lower()
+        path_to_java_funcs_contract = path_to_java_funcs / contract.type_info.acronym.lower()
         if path_to_java_funcs_contract.exists() and path_to_java_funcs_contract.is_dir():
             iterator = (i.stem.split("_") for i in path_to_java_funcs_contract.iterdir())
             for (func_type, event_type, suffix) in iterator:

@@ -48,3 +48,17 @@ class Dictionary():
     def __str__(self) -> str:
         """Instance string representation."""
         return f"{self.version}|{self.version_date}"
+
+    @property
+    def contract_reference_enum_set(self) -> typing.Set:
+        """Set of associated contract reference enumerations."""
+        return set([self.contract_reference_role, self.contract_reference_type])
+
+    @property
+    def enum_set(self) -> typing.Generator:
+        """Set of enumerations defined within dictionary."""
+        for term in self.term_set:
+            if term.is_enum:
+                yield term
+        yield self.contract_reference_role
+        yield self.contract_reference_type

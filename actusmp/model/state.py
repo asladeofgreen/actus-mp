@@ -21,6 +21,9 @@ class State():
     # Formal state field identifier, e.g. 'statusDate'.
     identifier: str
 
+    # Flag indicating whether the state field declares an array or not.
+    is_array: bool
+
     # Formal state field name, e.g. 'Status Date'.
     name: str
 

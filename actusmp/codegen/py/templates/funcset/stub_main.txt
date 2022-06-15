@@ -5,7 +5,7 @@ import datetime
 import typing
 
 from pyactus.typeset import Event
-from pyactus.typeset import TermsetOf{{utils.to_camel_case(contract.identifier)}} as ContractTermset
+from pyactus.typeset import TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}} as ContractTermset
 
 
 def execute_step(

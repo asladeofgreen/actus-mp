@@ -5,7 +5,7 @@ import datetime
 import typing
 
 {% for contract in dictionary.applicable_contracts %}
-from pyactus.funcset import {{contract.acronym.lower()}}
+from pyactus.funcset import {{contract.type_info.acronym.lower()}}
 {% endfor %}
 from pyactus.typeset import ContractTermset
 from pyactus.typeset import ContractType
@@ -15,7 +15,7 @@ from pyactus.typeset import Event
 # Map: contract type <-> function handle.
 _HANDLES = {
 {% for contract in dictionary.applicable_contracts %}
-    ContractType.{{contract.acronym}}: {{contract.acronym.lower()}},
+    ContractType.{{contract.type_info.acronym}}: {{contract.type_info.acronym.lower()}},
 {% endfor %}
 }
 
