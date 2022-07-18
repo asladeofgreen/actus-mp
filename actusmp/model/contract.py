@@ -20,13 +20,13 @@ class Contract():
     # Associated type information such as acronym, identifier ...etc.
     type_info: ContractTypeInfo
     
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Instance hash representation."""
-        return hash(self.identifier)
+        return hash(f"contract|{self.type_info.acronym}|{self.type_info.identifier}")
 
     def __str__(self) -> str:
         """Instance string representation."""
-        return f"contract|{self.type_info.acronym}|{len(self.term_set)}"
+        return f"contract|{self.type_info.acronym}|{self.type_info.identifier}|{len(self.term_set)}"
 
 
 @dataclasses.dataclass
@@ -48,9 +48,12 @@ class ContractSet():
     def __str__(self) -> str:
         """Instance string representation."""
         return f"contract-set|{len(self)}"
-
-    def get_contract(self, contract_id: str):
+    
+    def get_contract(self, contract_id: str) -> typing.Optional[Contract]:
         """Returns first contract within associated collection with matching identifier.
+
+        :param contract_id: Identifier of a contract.
+        :returns: A contract matched by it's id.
         
         """
         for item in self:

@@ -2,15 +2,15 @@
 # N.B. Auto-generated using actus-mp
 # **********************************
 from pyactus.typeset.enums import ContractType
-{% for contract in dictionary.applicable_contracts %}
+{% for contract in dictionary.contract_set %}
 from pyactus.typeset.termsets.{{utils.to_underscore_case(contract.type_info.identifier)}} import TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}}
 {% endfor %}
 
 
 # Set of all supported contract termsets.
 CONTRACT_TERMSETS = {
-{% for contract in dictionary.applicable_contracts %}
-    ContractType.{{contract.acronym}}: TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}},
+{% for contract in dictionary.contract_set %}
+    ContractType.{{contract.type_info.acronym}}: TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}},
 {% endfor %}
 }
 

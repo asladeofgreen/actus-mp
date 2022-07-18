@@ -6,7 +6,7 @@ from actusmp.model.taxonomy import ContractTypeInfo
 
 @dataclasses.dataclass
 class ApplicableTermInfo():
-    """Information related to a applicability contraints related to a contractual term.
+    """Information related to an term applicable to a contract.
     
     """
     # Identifier of associated contract type.
@@ -20,17 +20,17 @@ class ApplicableTermInfo():
 
     def __str__(self) -> str:
         """Instance string representation."""
-        return f"applicability-item|{self.contract_type_id}|{self.term_id}|{self.term_instruction}"
+        return f"applicable-term-info|{self.contract_type_id}|{self.term_id}|{self.term_instruction}"
 
     @property
-    def sort_key(self):
+    def sort_key(self) -> str:
         """A key used in sorting scenarios."""
         return f"{self.contract_type_id}|{self.term_id}"
 
 
 @dataclasses.dataclass
-class Applicability():
-    """Contains sets of appplicable terms related to contracts.
+class ApplicableTermInfoSet():
+    """Global set of terms applicable to contracts.
 
     """
     # Collection of associated applicable contract terms.
@@ -46,10 +46,15 @@ class Applicability():
 
     def __str__(self) -> str:
         """Instance string representation."""
-        return f"applicability|{len(self)}"
+        return f"applicable-term-info-set|{len(self)}"
 
-    def get_applicable_termset(self, type_info: ContractTypeInfo) -> typing.List[ApplicableTermInfo]:
-        """Returns set of items matched by contract type.
-        
+    def get_applicable_termset(self, type_info: ContractTypeInfo) -> typing.Generator:
+        """Returns set of applicable term information filtered by contract type.
+
+        :param type_info: Type information associated with a contract.
+        :returns: Sequence of applicable terms.
+
         """
-        return [i for i in self if i.contract_type_id == type_info.identifier]
+        for info in self:
+            if info.contract_type_id == type_info.identifier:
+                yield info

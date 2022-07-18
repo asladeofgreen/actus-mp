@@ -1,4 +1,4 @@
-from actusmp.model.applicability import Applicability
+from actusmp.model.applicability import ApplicableTermInfoSet
 from actusmp.model.applicability import ApplicableTermInfo
 from actusmp.model.contract import Contract
 from actusmp.model.contract import ContractSet

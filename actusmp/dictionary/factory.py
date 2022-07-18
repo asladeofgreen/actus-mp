@@ -1,7 +1,7 @@
 import typing
 
 from actusmp.dictionary.accessor import Accessor
-from actusmp.model import Applicability
+from actusmp.model import ApplicableTermInfoSet
 from actusmp.model import ApplicableTermInfo
 from actusmp.model import Contract
 from actusmp.model import ContractSet
@@ -32,7 +32,7 @@ def get_dictionary() -> Dictionary:
         contract_event_type=_get_enum(accessor.contract_event_type),
         contract_reference_role=_get_enum(accessor.contract_reference_role),
         contract_reference_type=_get_enum(accessor.contract_reference_type),
-        contract_set=_get_contract_set(accessor, applicability, taxonomy, term_set),
+        contract_set=_get_contract_set(applicability, taxonomy, term_set),
         state_set=_get_state_set(accessor),
         taxonomy=taxonomy,
         term_set=term_set,
@@ -41,7 +41,7 @@ def get_dictionary() -> Dictionary:
         )
 
 
-def _get_applicability(accessor: Accessor) -> Applicability:
+def _get_applicability(accessor: Accessor) -> ApplicableTermInfoSet:
     """Decodes applicability declarations.
     
     """    
@@ -58,12 +58,11 @@ def _get_applicability(accessor: Accessor) -> Applicability:
                 )
             )
 
-    return Applicability(items)
+    return ApplicableTermInfoSet(items)
 
 
 def _get_contract_set(
-    accessor: Accessor,
-    applicability: Applicability,
+    applicability: ApplicableTermInfoSet,
     taxonomy: Taxonomy,
     term_set: TermSet
     ) -> ContractSet:
@@ -84,7 +83,7 @@ def _get_contract_set(
         )
 
     return ContractSet(
-        list(map(lambda i: _map_contract(i), taxonomy))
+        [i for i in map(lambda i: _map_contract(i), taxonomy) if i.type_info.acronym != "EXOTi"]
         )
 
 
@@ -256,7 +255,7 @@ def _get_term(obj: dict, prefix: str = "") -> Term:
             scalar_type=obj["type"]
         )
 
-def _get_contract(obj: dict, global_term_set: TermSet, applicability: Applicability) -> Contract:
+def _get_contract(obj: dict, global_term_set: TermSet, applicability: ApplicableTermInfoSet) -> Contract:
     return Contract(
         acronym=obj["acronym"],
         classification=obj["class"],
@@ -270,7 +269,7 @@ def _get_contract(obj: dict, global_term_set: TermSet, applicability: Applicabil
     )
 
 
-def _get_contract_term_set(contract_id: str, applicability: Applicability, term_set: TermSet) -> Contract:
+def _get_contract_term_set(contract_id: str, applicability: ApplicableTermInfoSet, term_set: TermSet) -> Contract:
     contract_term_set = []
     for info in applicability.get_applicable_termset(contract_id):
         for term in term_set:

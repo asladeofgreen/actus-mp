@@ -2,8 +2,8 @@ import dataclasses
 import datetime
 import typing
 
-from actusmp.model.applicability import Applicability
-from actusmp.model.contract import ContractSet
+from actusmp.model.applicability import ApplicableTermInfoSet
+from actusmp.model.contract import Contract, ContractSet
 from actusmp.model.enum_ import Enum
 from actusmp.model.state import StateSet
 from actusmp.model.taxonomy import Taxonomy
@@ -16,7 +16,7 @@ class Dictionary():
     
     """
     # Criteria that determine which set of terms are associated with which type of contract. 
-    applicability: Applicability
+    applicability: ApplicableTermInfoSet
     
     # Enumeration over set of contract event types.
     contract_event_type: Enum
@@ -35,7 +35,7 @@ class Dictionary():
 
     # Declaration of supported contract types.
     taxonomy: Taxonomy
-    
+
     # Set of declared contract terms.
     term_set: TermSet
 
@@ -59,8 +59,8 @@ class Dictionary():
     @property
     def enum_set(self) -> typing.Generator:
         """Set of enumerations defined within dictionary."""
+        yield self.contract_reference_role
+        yield self.contract_reference_type
         for term in self.term_set:
             if term.is_enum:
                 yield term
-        yield self.contract_reference_role
-        yield self.contract_reference_type

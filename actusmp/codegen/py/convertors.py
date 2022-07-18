@@ -37,9 +37,16 @@ def to_python_default(term: Term) -> str:
     """Maps an Actus term's default value to it's pythonic equivalent.
     
     """
+    def get_enum_default_acronym():
+        for member in term.allowed_values:
+            if member.is_match(term.default):
+                return member.acronym
+        print(f"WARNING: enum member default is incorrect, reverting to option 0 :: {term}")
+        return term.allowed_values[0].acronym
+
     if term.default:
         if term.scalar_type == ScalarType.Enum:
-            return f"enums.{to_camel_case(term.identifier)}.{term.acronym}"
+            return f"enums.{to_camel_case(term.identifier)}.{get_enum_default_acronym()}"
         elif term.scalar_type == ScalarType.Period:
             return "None"
         elif term.scalar_type == ScalarType.Real:

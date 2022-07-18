@@ -28,10 +28,6 @@ class Accessor():
         return self._obj["event"]["eventType"]
 
     @property
-    def contract_type_set(self) -> typing.List[dict]:
-        return self._obj["taxonomy"].keys()
-
-    @property
     def contract_reference_role(self) -> dict:
         return self._obj["contractReference"]["role"]
 
