@@ -255,19 +255,6 @@ def _get_term(obj: dict, prefix: str = "") -> Term:
             scalar_type=obj["type"]
         )
 
-def _get_contract(obj: dict, global_term_set: TermSet, applicability: ApplicableTermInfoSet) -> Contract:
-    return Contract(
-        acronym=obj["acronym"],
-        classification=obj["class"],
-        identifier=obj["identifier"],
-        coverage=obj.get("coverage"),
-        description=obj["description"],
-        family=obj["family"],
-        name=obj["name"],
-        status=obj.get("status", "Unknown"),
-        term_set=_get_contract_term_set(obj["identifier"], global_term_set, applicability)
-    )
-
 
 def _get_contract_term_set(contract_id: str, applicability: ApplicableTermInfoSet, term_set: TermSet) -> Contract:
     contract_term_set = []

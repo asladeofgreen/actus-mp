@@ -2,6 +2,8 @@ import dataclasses
 import enum
 import typing
 
+from actusmp.model.entity import Entity
+
 
 class ContractTypePublicationStatus(enum.Enum):
     """Current publication status of contract type.
@@ -14,32 +16,20 @@ class ContractTypePublicationStatus(enum.Enum):
 
 
 @dataclasses.dataclass
-class ContractTypeInfo():
+class ContractTypeInfo(Entity):
     """A node within the ACTUS taxonomy representing a financial contract associated with 
        an algorithm for deriving cash flow exposure amoungst a set of counter-parties.
     
     """
-    # Upper case 3/4 character type identifier, e.g. 'ANN'.
-    acronym: str
-
     # Contextual economic classification, e.g. 'Fixed Income'.
     classification: str
     
     # Contextual economic coverage, e.g. 'classical level payment mortgages'.
     coverage: str
 
-    # Fuller description of contract type's macro function.    
-    description: str
-    
     # Contextual economic instrument family, e.g. 'Basic'.
     family: str
-    
-    # Unique contract type identifier, e.g. 'annuity'.
-    identifier: str
-
-    # Contract type name, e.g. 'Annuity'.
-    name: str
-    
+        
     # Publication status, e.g. 'Released'.
     publication_status: ContractTypePublicationStatus
     

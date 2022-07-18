@@ -7,14 +7,14 @@ from actusmp.model import Dictionary
 from actusmp.model import FunctionType
 from actusmp.model import Term
 from actusmp.codegen.py import convertors
-from actusmp.utils import fsystem
+from actusmp.utils import fsys
 
 
 def gen_typeset_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     """Generates: `pyactus.typeset.terms.{contract}.py`.
     
     """
-    tmpl = fsystem.get_template("typeset/termset.txt")
+    tmpl = fsys.get_template("typeset/termset.txt")
     for contract in dictionary.contract_set:
         yield contract, tmpl.render(utils=convertors, contract=contract)
 
@@ -23,7 +23,7 @@ def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
     """Generates: `pyactus.typeset.enums.{enums}.py`.
     
     """
-    tmpl = fsystem.get_template("typeset/enum.txt")
+    tmpl = fsys.get_template("typeset/enum.txt")
     for definition in dictionary.enum_set:
         yield definition, tmpl.render(utils=convertors, definition=definition)
 
@@ -32,7 +32,7 @@ def gen_typeset_pkg_init(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.__init__.py`.
     
     """
-    tmpl = fsystem.get_template("typeset/pkg_init.txt")
+    tmpl = fsys.get_template("typeset/pkg_init.txt")
 
     return tmpl.render(utils=convertors, dictionary=dictionary)
 
@@ -41,7 +41,7 @@ def gen_typeset_pkg_init_enums(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.enums.__init__.py`.
     
     """
-    tmpl = fsystem.get_template("typeset/pkg_init_enums.txt")
+    tmpl = fsys.get_template("typeset/pkg_init_enums.txt")
 
     return tmpl.render(utils=convertors, dictionary=dictionary)
 
@@ -50,7 +50,7 @@ def gen_typeset_pkg_init_termsets(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.terms.__init__.py`.
     
     """
-    tmpl = fsystem.get_template("typeset/pkg_init_termsets.txt")
+    tmpl = fsys.get_template("typeset/pkg_init_termsets.txt")
 
     return tmpl.render(utils=convertors, dictionary=dictionary)
 
@@ -59,7 +59,7 @@ def gen_typeset_states(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.states.py`.
     
     """
-    tmpl = fsystem.get_template("typeset/states.txt")
+    tmpl = fsys.get_template("typeset/states.txt")
 
     return tmpl.render(utils=convertors, dictionary=dictionary)
 
@@ -68,7 +68,7 @@ def gen_funcset_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathlib.Pat
     """Generates: `pyactus.typeset.classes.{contract}.py`.
     
     """
-    tmpl = fsystem.get_template("funcset/pkg_init.txt")
+    tmpl = fsys.get_template("funcset/pkg_init.txt")
 
     return tmpl.render(dictionary=dictionary, utils=convertors)
 
@@ -78,8 +78,8 @@ def gen_funcset_stubs_1(dictionary: Dictionary, path_to_java_funcs: pathlib.Path
     
     """
     tmpl_set = {
-        FunctionType.POF: fsystem.get_template("funcset/stub_pof.txt"),
-        FunctionType.STF: fsystem.get_template("funcset/stub_stf.txt")
+        FunctionType.POF: fsys.get_template("funcset/stub_pof.txt"),
+        FunctionType.STF: fsys.get_template("funcset/stub_stf.txt")
     }
 
     iterator = _yield_funcset(dictionary, path_to_java_funcs)
@@ -92,7 +92,7 @@ def gen_funcset_stubs_2(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     """Generates: `pyactus.funcs.{contract}.main.py`.
     
     """
-    tmpl = fsystem.get_template("funcset/stub_main.txt")
+    tmpl = fsys.get_template("funcset/stub_main.txt")
 
     for contract in dictionary.contract_set:
         code_block = tmpl.render(utils=convertors, contract=contract)
@@ -103,7 +103,7 @@ def gen_funcset_stubs_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathl
     """Generates: `pyactus.funcs.{contract}.__init__.py`.
     
     """
-    tmpl = fsystem.get_template("funcset/stub_pkg_init.txt")
+    tmpl = fsys.get_template("funcset/stub_pkg_init.txt")
 
     for contract in dictionary.contract_set:
         funcset_iterator = _yield_funcset(dictionary, path_to_java_funcs, contract)

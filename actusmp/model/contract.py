@@ -1,9 +1,6 @@
 import dataclasses
 import typing
 
-from actusmp.model.enum_ import Enum
-from actusmp.model.scalar_type import ScalarType
-from actusmp.model.term import Term
 from actusmp.model.term import TermSet
 from actusmp.model.taxonomy import ContractTypeInfo
 

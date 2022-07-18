@@ -12,13 +12,13 @@ from pyactus.typeset.contracts import ContractTermset
 from pyactus.typeset.contracts import ReferenceRole
 from pyactus.typeset.contracts import ReferenceType
 from pyactus.typeset.enums import ENUM_SET
-{% for enum in dictionary.enum_set %}
-from pyactus.typeset.enums import {{utils.to_camel_case(enum.identifier)}}
+{% for defn in dictionary.enum_set %}
+from pyactus.typeset.enums import {{utils.to_camel_case(defn.identifier)}}
 {% endfor %}
 from pyactus.typeset.events import Event
 from pyactus.typeset.events import EventType
 from pyactus.typeset.termsets import CONTRACT_TERMSETS
-{% for contract in dictionary.contract_set %}
-from pyactus.typeset.termsets import TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}}
+{% for defn in dictionary.contract_set %}
+from pyactus.typeset.termsets import TermsetOf{{utils.to_camel_case(defn.type_info.identifier)}}
 {% endfor %}
 from pyactus.typeset.states import StateSpace

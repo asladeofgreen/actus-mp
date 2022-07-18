@@ -1,31 +1,20 @@
 import dataclasses
 import typing
 
+from actusmp.model.entity import Entity
 from actusmp.model.scalar_type import ScalarType
 
 
 @dataclasses.dataclass
-class State():
+class State(Entity):
     """A state field assigned during calculation execution.
     
     """
-    # A short identifier, e.g. 'SD'.
-    acronym: str
-
     # Constraint over set of allowed values, e.g. 'ISO8601 Datetime'.
     allowed_values: typing.List[typing.Union[dict, str]]
 
-    # Description of state field, e.g. 'The multiplier being applied to principal cash flows'.
-    description: str
-
-    # Formal state field identifier, e.g. 'statusDate'.
-    identifier: str
-
     # Flag indicating whether the state field declares an array or not.
     is_array: bool
-
-    # Formal state field name, e.g. 'Status Date'.
-    name: str
 
     # Associated scalar data type, e.g. Timestamp | Real | Enum ... etc.
     scalar_type: ScalarType

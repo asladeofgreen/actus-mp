@@ -3,7 +3,7 @@ import datetime
 import typing
 
 from actusmp.model.applicability import ApplicableTermInfoSet
-from actusmp.model.contract import Contract, ContractSet
+from actusmp.model.contract import ContractSet
 from actusmp.model.enum_ import Enum
 from actusmp.model.state import StateSet
 from actusmp.model.taxonomy import Taxonomy
@@ -48,13 +48,6 @@ class Dictionary():
     def __str__(self) -> str:
         """Instance string representation."""
         return f"{self.version}|{self.version_date}"
-
-    @property
-    def active_contract_set(self) -> typing.Generator:
-        """Returns set of active contracts - i.e. those with applicable terms."""
-        for contract in self.contract_set:
-            if contract.term_set:
-                yield contract
 
     @property
     def enum_set(self) -> typing.Generator:

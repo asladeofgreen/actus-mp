@@ -1,44 +1,29 @@
 import dataclasses
 import typing
 
+from actusmp.model.entity import Entity
 from actusmp.model.scalar_type import ScalarType
 
 
 @dataclasses.dataclass
-class Term():
+class Term(Entity):
     """A contractual term associated with a specific type of financial contract.
     
     """
-    # Upper case 3/4 character type identifier, e.g. 'IPAC'.
-    acronym: str
-
     # Constraint over set of allowed values, e.g. 'ISO8601 Datetime'.
     allowed_values: typing.List[typing.Union[dict, str]]
 
     # Default value.
     default: typing.Optional[str]
 
-    # Fuller description of term's raison d'etre.    
-    description: str
-
     # Identifier of associated group, e.g. 'Interest'
     group_id: str
 
-    # Formal term identifier, e.g. 'accruedInterest'.
-    identifier: str
-
-    # Flag indicating whether the term declares an array or not.
+    # Flag indicating whether term declaration defines an array.
     is_array: bool
-
-    # Term name, e.g. 'Accrued Interest'.
-    name: str
 
     # Associated scalar data type, e.g. Timestamp | Real | Enum ... etc.
     scalar_type: ScalarType
-
-    def __str__(self) -> str:
-        """Instance string representation."""
-        return f"term|{self.identifier}"
 
     @property
     def is_enum(self):

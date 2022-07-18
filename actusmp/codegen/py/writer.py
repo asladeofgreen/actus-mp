@@ -11,7 +11,7 @@ from actusmp.codegen.py.generator import gen_funcset_pkg_init
 from actusmp.codegen.py.generator import gen_funcset_stubs_1
 from actusmp.codegen.py.generator import gen_funcset_stubs_2
 from actusmp.codegen.py.generator import gen_funcset_stubs_pkg_init
-from actusmp.utils import fsystem
+from actusmp.utils import fsys
 from actusmp.utils.convertors import to_underscore_case
 
 
@@ -69,7 +69,7 @@ def _write_funcset_pkg_init(
     dpath.mkdir(parents=True, exist_ok=True)
     fpath = dpath / "__init__.py"
     code_block = gen_funcset_pkg_init(dictionary, path_to_java_funcs)
-    fsystem.write(fpath, code_block)
+    fsys.write(fpath, code_block)
 
 
 def _write_funcset_stubs_1(
@@ -87,7 +87,7 @@ def _write_funcset_stubs_1(
             fpath = dpath / f"{func_type.name.lower()}_{event_type.lower()}_{suffix}.py"
         else:
             fpath = dpath / f"{func_type.name.lower()}_{event_type.lower()}.py"
-        fsystem.write(fpath, code_block)
+        fsys.write(fpath, code_block)
 
 
 def _write_funcset_stubs_2(dictionary: Dictionary, dest: pathlib.Path):
@@ -98,7 +98,7 @@ def _write_funcset_stubs_2(dictionary: Dictionary, dest: pathlib.Path):
         dpath = dest / "funcset" / contract.type_info.acronym.lower()
         dpath.mkdir(parents=True, exist_ok=True)
         fpath = dpath / "main.py"
-        fsystem.write(fpath, code_block)
+        fsys.write(fpath, code_block)
 
 
 def _write_funcset_stubs_pkg_init(
@@ -113,7 +113,7 @@ def _write_funcset_stubs_pkg_init(
         dpath = dest / "funcset" / contract.type_info.acronym.lower()
         dpath.mkdir(parents=True, exist_ok=True)
         fpath = dpath / "__init__.py"
-        fsystem.write(fpath, code_block)
+        fsys.write(fpath, code_block)
 
 
 def _write_typeset_dirs(_: Dictionary, dest: pathlib.Path):
@@ -133,7 +133,7 @@ def _write_typeset_enums(dictionary: Dictionary, dest: pathlib.Path):
     """
     for term, code_block in gen_typeset_enums(dictionary):
         fpath = dest / "typeset" / "enums" / f"{to_underscore_case(term.identifier)}.py"
-        fsystem.write(fpath, code_block)
+        fsys.write(fpath, code_block)
 
 
 def _write_typeset_enums_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
@@ -142,7 +142,7 @@ def _write_typeset_enums_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
     """
     fpath = dest / "typeset" / "enums" / "__init__.py"
     code_block = gen_typeset_pkg_init_enums(dictionary)
-    fsystem.write(fpath, code_block)
+    fsys.write(fpath, code_block)
 
 
 def _write_typeset_states(dictionary: Dictionary, dest: pathlib.Path):
@@ -151,7 +151,7 @@ def _write_typeset_states(dictionary: Dictionary, dest: pathlib.Path):
     """
     fpath = dest / "typeset" / "states.py"
     code_block = gen_typeset_states(dictionary)
-    fsystem.write(fpath, code_block)
+    fsys.write(fpath, code_block)
 
 
 def _write_typeset_termsets(dictionary: Dictionary, dest: pathlib.Path):
@@ -160,7 +160,7 @@ def _write_typeset_termsets(dictionary: Dictionary, dest: pathlib.Path):
     """
     for contract, code_block in gen_typeset_termsets(dictionary):
         fpath = dest / "typeset" / "termsets" / f"{to_underscore_case(contract.type_info.identifier)}.py"
-        fsystem.write(fpath, code_block)
+        fsys.write(fpath, code_block)
 
 
 def _write_typeset_termsets_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
@@ -169,7 +169,7 @@ def _write_typeset_termsets_pkg_init(dictionary: Dictionary, dest: pathlib.Path)
     """
     fpath = dest / "typeset" / "termsets" / "__init__.py"
     code_block = gen_typeset_pkg_init_termsets(dictionary)
-    fsystem.write(fpath, code_block)
+    fsys.write(fpath, code_block)
 
 
 def _write_typeset_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
@@ -178,4 +178,4 @@ def _write_typeset_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
     """
     fpath = dest / "typeset" / "__init__.py"
     code_block = gen_typeset_pkg_init(dictionary)
-    fsystem.write(fpath, code_block)
+    fsys.write(fpath, code_block)
