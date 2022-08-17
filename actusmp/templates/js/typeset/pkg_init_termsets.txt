@@ -1,0 +1,20 @@
+/**
+ *  N.B. Auto-generated using actus-mp
+ */
+
+{% for defn in dictionary.contract_set %}
+import { TermsetOf{{utils.to_camel_case(defn.type_info.identifier)}} } from './{{utils.to_pascal_case(defn.type_info.identifier)}}';
+{% endfor %}
+
+export {
+{% for defn in dictionary.contract_set %}
+    TermsetOf{{utils.to_camel_case(defn.type_info.identifier)}},
+{% endfor %}
+}
+
+export const CONTRACT_TERMSETS = new Set<object>([
+{% for defn in dictionary.contract_set %}
+    TermsetOf{{utils.to_camel_case(defn.type_info.identifier)}},
+{% endfor %}
+]);
+

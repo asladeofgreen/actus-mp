@@ -1,0 +1,16 @@
+/**
+ *  N.B. Auto-generated using actus-mp
+ */
+
+/**
+ *
+ *  Set of applicable terms: {{contract.type_info.acronym}} -> {{contract.type_info.name}}.
+ *
+ *  {{contract.type_info.description}}
+ *
+ */
+export class TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}}(contracts.ContractTermset) {
+    // Contract Identifier.
+    contractID: string;
+}
+

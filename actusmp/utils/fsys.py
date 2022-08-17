@@ -5,19 +5,19 @@ import typing
 import jinja2
 
 
-# Set codegen home folder.
-_CODEGEN_DIR: pathlib.Path = pathlib.Path(os.path.dirname(__file__)).parent / "codegen"
+# Set templates home folder.
+_TEMPLATES_DIR: pathlib.Path = pathlib.Path(os.path.dirname(__file__)).parent / "templates"
 
 # Set codegen template sub-folders.
-_CODEGEN_DIR_TEMPLATES: typing.List[pathlib.Path] = [
-    _CODEGEN_DIR / "js" / "templates",
-    _CODEGEN_DIR / "py" / "templates",
-    _CODEGEN_DIR / "rs" / "templates",
+_TEMPLATES_DIR: typing.List[pathlib.Path] = [
+    _TEMPLATES_DIR / "js",
+    _TEMPLATES_DIR / "py",
+    _TEMPLATES_DIR / "rs"
 ]
 
 # Set codegen template engine.
 _CODEGEN_ENV: jinja2.Environment = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(_CODEGEN_DIR_TEMPLATES),
+    loader=jinja2.FileSystemLoader(_TEMPLATES_DIR),
     autoescape=jinja2.select_autoescape(),
     trim_blocks=True
 )
