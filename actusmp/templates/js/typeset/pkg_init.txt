@@ -9,12 +9,14 @@ import {
 {% endfor %}
 } from './enums';
 
+import { StateSpace } from './states';
+
 import {
     CONTRACT_TERMSETS,
 {% for defn in dictionary.contract_set %}
     TermsetOf{{utils.to_camel_case(defn.type_info.identifier)}},
 {% endfor %}
-} from './termsets';
+} from './terms';
 
 export {
     // Enumerations.
@@ -22,6 +24,8 @@ export {
 {% for defn in dictionary.enum_set %}
     {{utils.to_camel_case(defn.identifier)}},
 {% endfor %}
+    // States.
+    StateSpace,
     // Termsets.
     CONTRACT_TERMSETS,
 {% for defn in dictionary.contract_set %}

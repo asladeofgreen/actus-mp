@@ -19,11 +19,11 @@ def to_javascript_type(term: Term) -> str:
         elif typedef == ScalarType.Period:
             return "auxiliary.Period"
         elif typedef == ScalarType.Real:
-            return "float"
+            return "number"
         elif typedef == ScalarType.Timestamp:
-            return "datetime.datetime"
+            return "Date"
         elif typedef == ScalarType.Varchar:
-            return "str"
+            return "string"
         else:
             raise ValueError(f"Unsupported term scalar type: {term.scalar_type} :: {typedef}")        
 
