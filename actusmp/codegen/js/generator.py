@@ -27,6 +27,24 @@ def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
         yield definition, tmpl.render(utils=convertors, definition=definition)
 
 
+def gen_typeset_events(dictionary: Dictionary) -> str:
+    """Generates: `pyactus.typeset.events.index.js`.
+    
+    """
+    tmpl = fsys.get_template("typeset/events.txt")
+
+    return tmpl.render(utils=convertors, dictionary=dictionary, defn=dictionary.contract_event_type)
+
+
+def gen_typeset_funcs(dictionary: Dictionary) -> str:
+    """Generates: `pyactus.typeset.funcs.index.js`.
+    
+    """
+    tmpl = fsys.get_template("typeset/funcs.txt")
+
+    return tmpl.render(utils=convertors, dictionary=dictionary)
+
+
 def gen_typeset_pkg_init(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.index.js`.
     

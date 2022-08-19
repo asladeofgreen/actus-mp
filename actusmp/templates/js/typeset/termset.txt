@@ -9,7 +9,7 @@
  *  {{contract.type_info.description}}
  *
  */
-export class TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}} extends ContractTermset {
+export class TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}} {
     // Contract Identifier.
     contractID: string;
 }

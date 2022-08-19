@@ -5,6 +5,8 @@ from actusmp.codegen.js.generator import gen_typeset_termsets
 from actusmp.codegen.js.generator import gen_typeset_pkg_init_termsets
 from actusmp.codegen.js.generator import gen_typeset_states
 from actusmp.codegen.js.generator import gen_typeset_enums
+from actusmp.codegen.js.generator import gen_typeset_events
+from actusmp.codegen.js.generator import gen_typeset_funcs
 from actusmp.codegen.js.generator import gen_typeset_pkg_init_enums
 from actusmp.codegen.js.generator import gen_typeset_pkg_init
 from actusmp.codegen.js.generator import gen_funcset_pkg_init
@@ -13,7 +15,6 @@ from actusmp.codegen.js.generator import gen_funcset_stubs_2
 from actusmp.codegen.js.generator import gen_funcset_stubs_pkg_init
 from actusmp.utils import fsys
 from actusmp.utils.convertors import to_pascal_case
-from actusmp.utils.convertors import to_underscore_case
 
 
 def write_typeset(dest: pathlib.Path, dictionary: Dictionary):
@@ -31,6 +32,8 @@ def write_typeset(dest: pathlib.Path, dictionary: Dictionary):
         _write_typeset_states,
         _write_typeset_enums,
         _write_typeset_enums_pkg_init,
+        _write_typeset_events,
+        _write_typeset_funcs,
     ):
         writer(dictionary, dest)
 
@@ -123,6 +126,8 @@ def _write_typeset_dirs(_: Dictionary, dest: pathlib.Path):
     """
     for dpath in (
         dest / "typeset" / "enums",
+        dest / "typeset" / "events",
+        dest / "typeset" / "funcs",
         dest / "typeset" / "states",
         dest / "typeset" / "terms"
     ):
@@ -144,6 +149,24 @@ def _write_typeset_enums_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
     """
     fpath = dest / "typeset" / "enums" / "index.ts"
     code_block = gen_typeset_pkg_init_enums(dictionary)
+    fsys.write(fpath, code_block)
+
+
+def _write_typeset_events(dictionary: Dictionary, dest: pathlib.Path):
+    """Writes to `actusjs.typeset.events.index`.
+    
+    """
+    fpath = dest / "typeset" / "events" / "index.ts"
+    code_block = gen_typeset_events(dictionary)
+    fsys.write(fpath, code_block)
+
+
+def _write_typeset_funcs(dictionary: Dictionary, dest: pathlib.Path):
+    """Writes to `actusjs.typeset.events.index`.
+    
+    """
+    fpath = dest / "typeset" / "funcs" / "index.ts"
+    code_block = gen_typeset_funcs(dictionary)
     fsys.write(fpath, code_block)
 
 
