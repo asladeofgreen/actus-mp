@@ -14,7 +14,7 @@ import {
 export enum EventType {
 {% for member in defn.members %}
     // {{member.name}}: {{member.description.strip()}}
-    {{utils.to_javascript_enum_member(defn, member)}} = {{member.option}},
+    {{utils.to_js_enum_member(defn, member)}} = {{member.option}},
 {% if member != defn.members[-1] %}
 
 {% endif %}

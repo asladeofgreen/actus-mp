@@ -17,7 +17,7 @@ import * as enums from '../enums';
 export class StateSpace {
 {% for defn in dictionary.state_set %}
     // {{defn.acronym}} :: {{defn.name}} :: {{defn.short_description}}.
-    {{utils.to_pascal_case(defn.identifier)}}: {{utils.to_javascript_type(defn)}};
+    {{utils.to_pascal_case(defn.identifier)}}: {{utils.to_js_type(defn)}};
 {% if defn != dictionary.state_set._states[-1] %}
 
 {% endif %}

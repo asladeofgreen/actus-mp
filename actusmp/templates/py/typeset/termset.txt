@@ -34,7 +34,7 @@ class TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}}(contracts.
 {% else %}
     # {{term.name}}.
 {% endif %}
-    {{utils.to_underscore_case(term.identifier)}}: {{utils.to_python_type(term)}} = {{utils.to_python_default(term)}}
+    {{utils.to_underscore_case(term.identifier)}}: {{utils.to_py_type(term)}} = {{utils.to_py_default(term)}}
 
 {% endif %}
 {% endfor %}

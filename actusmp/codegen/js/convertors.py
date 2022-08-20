@@ -5,7 +5,7 @@ from actusmp.model import Term
 from actusmp.utils.convertors import *
 
 
-def to_javascript_type(term: Term) -> str:
+def to_js_type(term: Term) -> str:
     """Maps an Actus term's type to it's js equivalent.
     
     """
@@ -33,7 +33,7 @@ def to_javascript_type(term: Term) -> str:
         return _map(term.scalar_type)
 
 
-def to_javascript_default(term: Term) -> str:
+def to_js_default(term: Term) -> str:
     """Maps an Actus term's default value to it's js equivalent.
     
     """
@@ -58,7 +58,7 @@ def to_javascript_default(term: Term) -> str:
         return f"'TODO: format {term.scalar_type} :: {term.default}'"
 
 
-def to_javascript_enum_member(definition: Enum, member: EnumMember) -> str:
+def to_js_enum_member(definition: Enum, member: EnumMember) -> str:
     """Maps an enum member to a python safe enum member name.
     
     """
@@ -67,7 +67,6 @@ def to_javascript_enum_member(definition: Enum, member: EnumMember) -> str:
     try:
         member_name = member_name.upper()
     except:
-        print(definition, member)
         raise
 
     try:
@@ -76,15 +75,3 @@ def to_javascript_enum_member(definition: Enum, member: EnumMember) -> str:
         return member_name
     else:
         return f"_{member_name}"
-
-
-def to_javascript_enum_member_1(member: EnumMember) -> str:
-    """Maps an enum member name to a js safe enum member name.
-    
-    """
-    try:
-        int(member.acronym[0])
-    except ValueError:
-        return member.acronym
-    else:
-        return f"_{member.acronym}"

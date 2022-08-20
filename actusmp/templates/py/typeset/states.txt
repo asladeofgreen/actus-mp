@@ -20,7 +20,7 @@ class StateSpace():
     """
 {% for state in dictionary.state_set %}
     # {{state.acronym}} :: {{state.name}} :: {{state.short_description}}.
-    {{utils.to_underscore_case(state.identifier)}}: {{utils.to_python_type(state)}}
+    {{utils.to_underscore_case(state.identifier)}}: {{utils.to_py_type(state)}}
 
 {% endfor %}
 

@@ -52,8 +52,15 @@ class Dictionary():
     @property
     def enum_set(self) -> typing.Generator:
         """Set of enumerations defined within dictionary."""
-        yield self.contract_reference_role
-        yield self.contract_reference_type
-        for term in self.term_set:
-            if term.is_enum:
-                yield term
+        targets = \
+            [i for i in self.term_set if i.is_enum] + \
+            [self.contract_reference_role, self.contract_reference_type]
+
+        for target in sorted(targets, key=lambda i: i.identifier):
+            yield target
+
+        # yield self.contract_reference_role
+        # yield self.contract_reference_type
+        # for term in self.term_set:
+        #     if term.is_enum:
+        #         yield term

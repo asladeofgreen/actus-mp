@@ -2,6 +2,8 @@
  *  N.B. Auto-generated using actus-mp
  */
 
+import * as enums from '../enums';
+
 /**
  *
  *  Set of applicable terms: {{contract.type_info.acronym}} -> {{contract.type_info.name}}.
@@ -12,5 +14,28 @@
 export class TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}} {
     // Contract Identifier.
     contractID: string;
+
+    // Contract Role.
+    contractRole: enums.ContractRole;
+
+    // Contract Type :: The ContractType is the most important information. It defines the cash flow generating pattern of a contract. The ContractType information in combination with a given state of the risk factors will produce a deterministic sequence of cash flows which are the basis of any financial analysis.
+    contractType: enums.ContractType = enums.ContractType.{{contract.type_info.acronym}};
+
+{% if contract.term_set %}
+{% for term in contract.term_set %}
+{% if term.identifier not in ("contractID", "contractType", "contractRole",) %}
+{% if term.short_description %}
+    // {{term.name}} :: {{term.short_description}}.
+{% else %}
+    // {{term.name}}.
+{% endif %}
+    {{utils.to_pascal_case(term.identifier)}}: {{utils.to_js_type(term)}} = {{utils.to_js_default(term)}};
+
+{% endif %}
+{% endfor %}
+{% else %}
+    // WARNING:: This contract type has not yet been formally defined.  This class is thus simply a placeholder.
+    // raise NotImplementedError("WARNING: Standard does not yet support this contract type.")
+{% endif %}
 }
 

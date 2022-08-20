@@ -5,7 +5,7 @@ from actusmp.model import Term
 from actusmp.utils.convertors import *
 
 
-def to_python_type(term: Term) -> str:
+def to_py_type(term: Term) -> str:
     """Maps an Actus term's type to it's pythonic equivalent.
     
     """
@@ -33,7 +33,7 @@ def to_python_type(term: Term) -> str:
         return _map(term.scalar_type)
 
 
-def to_python_default(term: Term) -> str:
+def to_py_default(term: Term) -> str:
     """Maps an Actus term's default value to it's pythonic equivalent.
     
     """
@@ -58,7 +58,7 @@ def to_python_default(term: Term) -> str:
         return f"'TODO: format {term.scalar_type} :: {term.default}'"
 
 
-def to_python_enum_member(definition: Enum, member: EnumMember) -> str:
+def to_py_enum_member(definition: Enum, member: EnumMember) -> str:
     """Maps an enum member to a python safe enum member name.
     
     """
@@ -78,7 +78,7 @@ def to_python_enum_member(definition: Enum, member: EnumMember) -> str:
         return f"_{member_name}"
 
 
-def to_python_enum_member_1(member: EnumMember) -> str:
+def to_py_enum_member_1(member: EnumMember) -> str:
     """Maps an enum member name to a python safe enum member name.
     
     """
