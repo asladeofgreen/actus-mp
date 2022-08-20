@@ -25,6 +25,10 @@ class Enum(Entity):
     # Collection of associated enumeration members.
     members: typing.List[EnumMember] 
 
+    def __hash__(self) -> int:
+        """Instance hash representation."""
+        return hash(f"enum|{self.acronym}|{self.identifier}")
+
     def __iter__(self) -> typing.Iterator[EnumMember]:
         """Instance iterator."""
         return iter(sorted(self.members, key=lambda i: i.option))    

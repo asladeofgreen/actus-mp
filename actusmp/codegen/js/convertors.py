@@ -48,7 +48,7 @@ def to_js_default(term: Term) -> str:
         if term.scalar_type == ScalarType.Enum:
             return f"enums.{to_camel_case(term.identifier)}.{get_enum_default_acronym()}"
         elif term.scalar_type == ScalarType.Period:
-            return "None"
+            return "null"
         elif term.scalar_type == ScalarType.Real:
             try:
                 return float(term.default)
@@ -56,9 +56,18 @@ def to_js_default(term: Term) -> str:
                 return float(0)
 
         return f"'TODO: format {term.scalar_type} :: {term.default}'"
+    
+    return "null"
 
 
-def to_js_enum_member(definition: Enum, member: EnumMember) -> str:
+def to_js_optional_flag(term: Term) -> str:
+    """Maps an Actus term to it's js optionality flag.
+    
+    """
+    return "" if term.default else "?"
+
+
+def to_js_enum_member(member: EnumMember) -> str:
     """Maps an enum member to a python safe enum member name.
     
     """

@@ -3,7 +3,7 @@ import pathlib
 from actusmp.model import Dictionary
 from actusmp.codegen.py.generator import gen_typeset_termsets
 from actusmp.codegen.py.generator import gen_typeset_pkg_init_termsets
-from actusmp.codegen.py.generator import gen_typeset_states
+from actusmp.codegen.py.generator import gen_typeset_core_states
 from actusmp.codegen.py.generator import gen_typeset_enums
 from actusmp.codegen.py.generator import gen_typeset_pkg_init_enums
 from actusmp.codegen.py.generator import gen_typeset_pkg_init
@@ -150,7 +150,7 @@ def _write_typeset_states(dictionary: Dictionary, dest: pathlib.Path):
     
     """
     fpath = dest / "typeset" / "states.py"
-    code_block = gen_typeset_states(dictionary)
+    code_block = gen_typeset_core_states(dictionary)
     fsys.write(fpath, code_block)
 
 

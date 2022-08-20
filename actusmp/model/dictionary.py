@@ -1,5 +1,6 @@
 import dataclasses
 import datetime
+from faulthandler import is_enabled
 import typing
 
 from actusmp.model.applicability import ApplicableTermInfoSet
@@ -21,14 +22,23 @@ class Dictionary():
     # Enumeration over set of contract event types.
     contract_event_type: Enum
 
-    # Enumeration over set Intra-contract reference information.
+    # Enumeration over set of contract performance status.
+    contract_performance: Enum
+
+    # Enumeration over set of contract roles.
+    contract_role: Enum
+
+    # Enumeration over set of intra-contract reference information.
     contract_reference_role: Enum
 
-    # Intra-contract reference information.
+    # Enumeration over set of intra-contract reference types.
     contract_reference_type: Enum
 
     # Set of supported financial contracts.
     contract_set: ContractSet
+
+    # Enumeration over set of contract types.
+    contract_type: Enum
 
     # Set of states through which a contract may pass during it's lifetime.
     state_set: StateSet
@@ -56,11 +66,29 @@ class Dictionary():
             [i for i in self.term_set if i.is_enum] + \
             [self.contract_reference_role, self.contract_reference_type]
 
+        # targets = \
+        #     [i for i in self.term_set if i.is_enum] + \
+        #     [self.contract_event_type, self.contract_reference_role, self.contract_reference_type]
+
         for target in sorted(targets, key=lambda i: i.identifier):
             yield target
 
-        # yield self.contract_reference_role
-        # yield self.contract_reference_type
-        # for term in self.term_set:
-        #     if term.is_enum:
-        #         yield term
+    @property
+    def enum_set_core(self) -> typing.List[Enum]:
+        """Set of core enumerations defined within dictionary."""
+        return sorted([
+            self.contract_event_type,
+            self.contract_performance,
+            self.contract_reference_role,
+            self.contract_reference_type,
+            self.contract_role,
+            self.contract_type,
+        ], key=lambda i: i.identifier)
+
+    @property
+    def enum_set_terms(self) -> typing.Generator:
+        """Set of term enumerations defined within dictionary."""
+        # TODO: remove identifier in check as this should be derivable.
+        for defn in self.term_set:
+            if defn.is_enum and defn not in self.enum_set_core and defn.identifier not in {"contractPerformance", "contractType", "contractRole"}:
+                yield defn

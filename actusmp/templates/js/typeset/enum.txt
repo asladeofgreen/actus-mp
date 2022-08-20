@@ -10,7 +10,7 @@
 export enum {{utils.to_camel_case(definition.identifier)}} {
 {% for member in definition.allowed_values %}
     // {{member.name}}: {{member.description.strip()}}
-    {{utils.to_js_enum_member(definition, member)}} = {{member.option}},
+    {{utils.to_js_enum_member(member)}} = {{member.option}},
 {% if member != definition.allowed_values[-1] %}
 
 {% endif %}

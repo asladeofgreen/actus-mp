@@ -36,6 +36,18 @@ class Accessor():
         return self._obj["contractReference"]["type"]
 
     @property
+    def contract_performance(self) -> dict:
+        return self._obj["terms"]["contractPerformance"]
+
+    @property
+    def contract_role(self) -> dict:
+        return self._obj["terms"]["contractRole"]
+
+    @property
+    def contract_type(self) -> dict:
+        return self._obj["terms"]["contractType"]
+
+    @property
     def state_set(self) -> typing.List[dict]:
         return self._obj["states"].values()
 

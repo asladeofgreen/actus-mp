@@ -55,7 +55,7 @@ def gen_typeset_pkg_init_termsets(dictionary: Dictionary) -> str:
     return tmpl.render(utils=convertors, dictionary=dictionary)
 
 
-def gen_typeset_states(dictionary: Dictionary) -> str:
+def gen_typeset_core_states(dictionary: Dictionary) -> str:
     """Generates: `pyactus.typeset.states.py`.
     
     """

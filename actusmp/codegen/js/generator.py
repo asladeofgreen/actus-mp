@@ -3,10 +3,60 @@ import typing
 
 from actusmp.model import Contract
 from actusmp.model import Dictionary
+from actusmp.model import Enum
 from actusmp.model import FunctionType
 from actusmp.model import Term
 from actusmp.codegen.js import convertors
 from actusmp.utils import fsys
+
+
+def gen_typeset_core_enum(dictionary: Dictionary, defn: Enum) -> str:
+    """Generates: `pyactus.typeset.core.enums.{defn.identifier}.ts`.
+    
+    """
+    tmpl = fsys.get_template("typeset/core_enum.txt")
+
+    return tmpl.render(
+        utils=convertors,
+        dictionary=dictionary,
+        defn=defn,
+        )
+
+
+def gen_typeset_core_enum_index(dictionary: Dictionary) -> str:
+    """Generates: `pyactus.typeset.enums.index.ts`.
+    
+    """
+    tmpl = fsys.get_template("typeset/core_enum_index.txt")
+
+    return tmpl.render(utils=convertors, dictionary=dictionary)
+
+
+def gen_typeset_core_index(dictionary: Dictionary) -> str:
+    """Generates: `pyactus.typeset.core.index`.
+    
+    """
+    tmpl = fsys.get_template("typeset/core_index.txt")
+
+    return tmpl.render(utils=convertors, dictionary=dictionary)
+
+
+def gen_typeset_core_states(dictionary: Dictionary) -> str:
+    """Generates: `pyactus.typeset.core.states`.
+    
+    """
+    tmpl = fsys.get_template("typeset/core_states.txt")
+
+    return tmpl.render(utils=convertors, dictionary=dictionary)
+
+
+def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
+    """Generates: `pyactus.typeset.enums.{enums}.js`.
+    
+    """
+    tmpl = fsys.get_template("typeset/enum.txt")
+    for definition in dictionary.enum_set_terms:
+        yield definition, tmpl.render(utils=convertors, definition=definition)
 
 
 def gen_typeset_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
@@ -16,33 +66,6 @@ def gen_typeset_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     tmpl = fsys.get_template("typeset/termset.txt")
     for contract in dictionary.contract_set:
         yield contract, tmpl.render(utils=convertors, contract=contract)
-
-
-def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
-    """Generates: `pyactus.typeset.enums.{enums}.js`.
-    
-    """
-    tmpl = fsys.get_template("typeset/enum.txt")
-    for definition in dictionary.enum_set:
-        yield definition, tmpl.render(utils=convertors, definition=definition)
-
-
-def gen_typeset_events(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.events.index.js`.
-    
-    """
-    tmpl = fsys.get_template("typeset/events.txt")
-
-    return tmpl.render(utils=convertors, dictionary=dictionary, defn=dictionary.contract_event_type)
-
-
-def gen_typeset_funcs(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.funcs.index.js`.
-    
-    """
-    tmpl = fsys.get_template("typeset/funcs.txt")
-
-    return tmpl.render(utils=convertors, dictionary=dictionary)
 
 
 def gen_typeset_pkg_init(dictionary: Dictionary) -> str:
@@ -68,15 +91,6 @@ def gen_typeset_pkg_init_termsets(dictionary: Dictionary) -> str:
     
     """
     tmpl = fsys.get_template("typeset/pkg_init_termsets.txt")
-
-    return tmpl.render(utils=convertors, dictionary=dictionary)
-
-
-def gen_typeset_states(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.states.js`.
-    
-    """
-    tmpl = fsys.get_template("typeset/states.txt")
 
     return tmpl.render(utils=convertors, dictionary=dictionary)
 
@@ -110,7 +124,6 @@ def gen_funcset_stubs_2(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     
     """
     tmpl = fsys.get_template("funcset/stub_main.txt")
-
     for contract in dictionary.contract_set:
         code_block = tmpl.render(utils=convertors, contract=contract)
         yield contract, code_block

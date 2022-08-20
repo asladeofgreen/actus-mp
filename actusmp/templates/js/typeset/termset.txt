@@ -2,6 +2,10 @@
  *  N.B. Auto-generated using actus-mp
  */
 
+import {
+    ContractRole,
+    ContractType,
+} from '../core/enums';
 import * as enums from '../enums';
 
 /**
@@ -16,10 +20,10 @@ export class TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}} {
     contractID: string;
 
     // Contract Role.
-    contractRole: enums.ContractRole;
+    contractRole: ContractRole;
 
     // Contract Type :: The ContractType is the most important information. It defines the cash flow generating pattern of a contract. The ContractType information in combination with a given state of the risk factors will produce a deterministic sequence of cash flows which are the basis of any financial analysis.
-    contractType: enums.ContractType = enums.ContractType.{{contract.type_info.acronym}};
+    contractType: ContractType = ContractType.{{contract.type_info.acronym}};
 
 {% if contract.term_set %}
 {% for term in contract.term_set %}
@@ -29,8 +33,10 @@ export class TermsetOf{{utils.to_camel_case(contract.type_info.identifier)}} {
 {% else %}
     // {{term.name}}.
 {% endif %}
-    {{utils.to_pascal_case(term.identifier)}}: {{utils.to_js_type(term)}} = {{utils.to_js_default(term)}};
+    {{utils.to_pascal_case(term.identifier)}}{{utils.to_js_optional_flag(term)}}: {{utils.to_js_type(term)}}{% if term.default %} = {{utils.to_js_default(term)}}{% endif %};
+{% if term != contract.term_set[-1] %}
 
+{% endif %}
 {% endif %}
 {% endfor %}
 {% else %}

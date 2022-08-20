@@ -2,14 +2,14 @@
  *  N.B. Auto-generated using actus-mp
  */
 
+import * as core from './core';
+
 import {
     ENUM_SET,
 {% for defn in dictionary.enum_set %}
     {{utils.to_camel_case(defn.identifier)}},
 {% endfor %}
 } from './enums';
-
-import { StateSpace } from './states';
 
 import {
     CONTRACT_TERMSETS,
@@ -19,13 +19,13 @@ import {
 } from './terms';
 
 export {
+    // Core.
+    core,
     // Enumerations.
     ENUM_SET,
 {% for defn in dictionary.enum_set %}
     {{utils.to_camel_case(defn.identifier)}},
 {% endfor %}
-    // States.
-    StateSpace,
     // Termsets.
     CONTRACT_TERMSETS,
 {% for defn in dictionary.contract_set %}

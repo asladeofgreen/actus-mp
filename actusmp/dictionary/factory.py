@@ -30,8 +30,11 @@ def get_dictionary() -> Dictionary:
     return Dictionary(
         applicability=applicability,
         contract_event_type=_get_enum(accessor.contract_event_type),
+        contract_performance=_get_enum(accessor.contract_performance),
+        contract_role=_get_enum(accessor.contract_role),
         contract_reference_role=_get_enum(accessor.contract_reference_role),
         contract_reference_type=_get_enum(accessor.contract_reference_type),
+        contract_type=_get_enum(accessor.contract_type),
         contract_set=_get_contract_set(applicability, taxonomy, term_set),
         state_set=_get_state_set(accessor),
         taxonomy=taxonomy,

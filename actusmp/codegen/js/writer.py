@@ -1,12 +1,16 @@
+import code
 import pathlib
 
 from actusmp.model import Dictionary
+
+from actusmp.codegen.js.generator import gen_typeset_core_enum
+from actusmp.codegen.js.generator import gen_typeset_core_enum_index
+
+from actusmp.codegen.js.generator import gen_typeset_core_index
+from actusmp.codegen.js.generator import gen_typeset_core_states
 from actusmp.codegen.js.generator import gen_typeset_termsets
 from actusmp.codegen.js.generator import gen_typeset_pkg_init_termsets
-from actusmp.codegen.js.generator import gen_typeset_states
 from actusmp.codegen.js.generator import gen_typeset_enums
-from actusmp.codegen.js.generator import gen_typeset_events
-from actusmp.codegen.js.generator import gen_typeset_funcs
 from actusmp.codegen.js.generator import gen_typeset_pkg_init_enums
 from actusmp.codegen.js.generator import gen_typeset_pkg_init
 from actusmp.codegen.js.generator import gen_funcset_pkg_init
@@ -24,18 +28,68 @@ def write_typeset(dest: pathlib.Path, dictionary: Dictionary):
     :param dictionary: Deserialised actus-dictionary.json.
 
     """
-    for writer in (
-        _write_typeset_dirs,
-        _write_typeset_pkg_init,
-        _write_typeset_termsets,
-        _write_typeset_termsets_pkg_init,
-        _write_typeset_states,
-        _write_typeset_enums,
-        _write_typeset_enums_pkg_init,
-        _write_typeset_events,
-        _write_typeset_funcs,
+    def _yield_dirs():
+        yield dest / "typeset" / "enums"
+        yield dest / "typeset" / "core" / "enums"
+        yield dest / "typeset" / "terms"
+
+    def _yield_core_enums():
+        for defn in dictionary.enum_set_core:
+            yield \
+                dest / "typeset" / "core" / "enums" / f"{defn.identifier}.ts", \
+                gen_typeset_core_enum(dictionary, defn)
+        yield \
+            dest / "typeset" / "core" / "enums" / "index.ts", \
+            gen_typeset_core_enum_index(dictionary)
+
+    def _yield_core_index():
+        yield \
+            dest / "typeset" / "core" / "index.ts", \
+            gen_typeset_core_index(dictionary)
+
+    def _yield_core_states():
+        yield \
+            dest / "typeset" / "core" / "states.ts", \
+            gen_typeset_core_states(dictionary)
+
+    def _yield_term_defns():
+        for contract, code_block in gen_typeset_termsets(dictionary):
+            yield \
+                dest / "typeset" / "terms" / f"{to_pascal_case(contract.type_info.identifier)}.ts", \
+                code_block
+        yield \
+            dest / "typeset" / "terms" / "index.ts", \
+            gen_typeset_pkg_init_termsets(dictionary)
+
+    def _yield_term_enums():
+        for term, code_block in gen_typeset_enums(dictionary):
+            yield \
+                dest / "typeset" / "enums" / f"{to_pascal_case(term.identifier)}.ts", \
+                code_block
+        yield \
+            dest / "typeset" / "enums" / "index.ts", \
+            gen_typeset_pkg_init_enums(dictionary)
+
+    def _yield_index():
+        yield \
+            dest / "typeset" / "index.ts", \
+            gen_typeset_pkg_init(dictionary)
+
+    # Prepare file system.
+    for path_to_dir in _yield_dirs():
+        path_to_dir.mkdir(parents=True, exist_ok=True)
+
+    # Write code files.
+    for factory in (
+        _yield_core_enums,
+        _yield_core_index,
+        _yield_core_states,
+        _yield_index,
+        _yield_term_defns,
+        _yield_term_enums,
     ):
-        writer(dictionary, dest)
+        for fpath, code_block in factory():
+            fsys.write(fpath, code_block)
 
 
 def write_funcset(
@@ -55,152 +109,50 @@ def write_funcset(
     path_to_java_funcs = path_to_java_impl / "src" / "main" / "java" / "org" / "actus" / "functions"
     assert path_to_java_funcs.exists() and path_to_java_funcs.is_dir()
 
-    _write_funcset_pkg_init(dictionary, dest, path_to_java_funcs)
-    _write_funcset_stubs_1(dictionary, dest, path_to_java_funcs)
-    _write_funcset_stubs_2(dictionary, dest)
-    _write_funcset_stubs_pkg_init(dictionary, dest, path_to_java_funcs)
+    def _yield_dirs():
+        yield dest / "funcset"
+        for contract in dictionary.contract_set:
+            yield dest / "funcset" / contract.type_info.acronym.lower()
 
+    def _yield_index():
+        yield \
+            dest / "funcset" / "index.ts", \
+            gen_funcset_pkg_init(dictionary, path_to_java_funcs)
 
-def _write_funcset_pkg_init(
-    dictionary: Dictionary,
-    dest: pathlib.Path,
-    path_to_java_funcs: pathlib.Path
-):
-    """Writes to `actusjs.funcset.{contract}.{func_type}_{event_type}_{contract}`.
-    
-    """
-    dpath = dest / "funcset"
-    dpath.mkdir(parents=True, exist_ok=True)
-    fpath = dpath / "index.ts"
-    code_block = gen_funcset_pkg_init(dictionary, path_to_java_funcs)
-    fsys.write(fpath, code_block)
+    def _yield_stubs_1():
+        for _, func_type, event_type, suffix, code_block in gen_funcset_stubs_1(dictionary, path_to_java_funcs):
+            if suffix != "":
+                yield \
+                    dest / "funcset" / f"{func_type.name.lower()}_{event_type.lower()}_{suffix}.ts", \
+                    code_block
+            else:
+                yield \
+                    dest / "funcset" / f"{func_type.name.lower()}_{event_type.lower()}.ts", \
+                    code_block
 
+    def _yield_stubs_2():
+        for _, code_block in gen_funcset_stubs_2(dictionary):
+            yield \
+                dest / "funcset" / "main.js", \
+                code_block
 
-def _write_funcset_stubs_1(
-    dictionary: Dictionary,
-    dest: pathlib.Path,
-    path_to_java_funcs: pathlib.Path
-):
-    """Writes to `actusjs.funcset.{contract}.{func_type}_{event_type}_{contract}`.
-    
-    """    
-    for contract, func_type, event_type, suffix, code_block in gen_funcset_stubs_1(dictionary, path_to_java_funcs):
-        dpath = dest / "funcset" / contract.type_info.acronym.lower()
-        dpath.mkdir(parents=True, exist_ok=True)
-        if suffix != "":
-            fpath = dpath / f"{func_type.name.lower()}_{event_type.lower()}_{suffix}.ts"
-        else:
-            fpath = dpath / f"{func_type.name.lower()}_{event_type.lower()}.ts"
-        fsys.write(fpath, code_block)
+    def _yield_stubs_index():
+        for _, code_block in gen_funcset_stubs_pkg_init(dictionary, path_to_java_funcs):
+            yield \
+                dest / "funcset" / "index.js", \
+                code_block
 
+    # Prepare file system.
+    for path_to_dir in _yield_dirs():
+        path_to_dir.mkdir(parents=True, exist_ok=True)
 
-def _write_funcset_stubs_2(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `actusjs.funcset.{contract}.main`.
-    
-    """    
-    for contract, code_block in gen_funcset_stubs_2(dictionary):
-        dpath = dest / "funcset" / contract.type_info.acronym.lower()
-        dpath.mkdir(parents=True, exist_ok=True)
-        fpath = dpath / "main.js"
-        fsys.write(fpath, code_block)
-
-
-def _write_funcset_stubs_pkg_init(
-    dictionary: Dictionary,
-    dest: pathlib.Path,
-    path_to_java_funcs: pathlib.Path
-):
-    """Writes to `actusjs.funcset.{contract}.{func_type}_{event_type}_{contract}`.
-    
-    """    
-    for contract, code_block in gen_funcset_stubs_pkg_init(dictionary, path_to_java_funcs):
-        dpath = dest / "funcset" / contract.type_info.acronym.lower()
-        dpath.mkdir(parents=True, exist_ok=True)
-        fpath = dpath / "index.js"
-        fsys.write(fpath, code_block)
-
-
-def _write_typeset_dirs(_: Dictionary, dest: pathlib.Path):
-    """Writes directories to `actusjs.typeset`.
-    
-    """
-    for dpath in (
-        dest / "typeset" / "enums",
-        dest / "typeset" / "events",
-        dest / "typeset" / "funcs",
-        dest / "typeset" / "states",
-        dest / "typeset" / "terms"
+    # Write code files.
+    for factory in (
+        _yield_index,
+        _yield_stubs_1,
+        _yield_stubs_2,
+        _yield_stubs_index,
     ):
-        dpath.mkdir(parents=True, exist_ok=True)
-
-
-def _write_typeset_enums(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `actusjs.typeset.enums.{enum}`.
+        for fpath, code_block in factory():
+            fsys.write(fpath, code_block)
     
-    """
-    for term, code_block in gen_typeset_enums(dictionary):
-        fpath = dest / "typeset" / "enums" / f"{to_pascal_case(term.identifier)}.ts"
-        fsys.write(fpath, code_block)
-
-
-def _write_typeset_enums_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `actusjs.typeset.enums.index`.
-    
-    """
-    fpath = dest / "typeset" / "enums" / "index.ts"
-    code_block = gen_typeset_pkg_init_enums(dictionary)
-    fsys.write(fpath, code_block)
-
-
-def _write_typeset_events(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `actusjs.typeset.events.index`.
-    
-    """
-    fpath = dest / "typeset" / "events" / "index.ts"
-    code_block = gen_typeset_events(dictionary)
-    fsys.write(fpath, code_block)
-
-
-def _write_typeset_funcs(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `actusjs.typeset.events.index`.
-    
-    """
-    fpath = dest / "typeset" / "funcs" / "index.ts"
-    code_block = gen_typeset_funcs(dictionary)
-    fsys.write(fpath, code_block)
-
-
-def _write_typeset_states(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `actusjs.typeset.states`.
-    
-    """
-    fpath = dest / "typeset" / "states" / "index.ts"
-    code_block = gen_typeset_states(dictionary)
-    fsys.write(fpath, code_block)
-
-
-def _write_typeset_termsets(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `actusjs.typeset.termsets.{contract}`.
-    
-    """
-    for contract, code_block in gen_typeset_termsets(dictionary):
-        fpath = dest / "typeset" / "terms" / f"{to_pascal_case(contract.type_info.identifier)}.ts"
-        fsys.write(fpath, code_block)
-
-
-def _write_typeset_termsets_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `actusjs.typeset.termsets.index`.
-    
-    """
-    fpath = dest / "typeset" / "terms" / "index.ts"
-    code_block = gen_typeset_pkg_init_termsets(dictionary)
-    fsys.write(fpath, code_block)
-
-
-def _write_typeset_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `actusjs.typeset.index`.
-    
-    """
-    fpath = dest / "typeset" / "index.ts"
-    code_block = gen_typeset_pkg_init(dictionary)
-    fsys.write(fpath, code_block)
