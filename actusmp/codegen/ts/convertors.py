@@ -5,7 +5,7 @@ from actusmp.model import Term
 from actusmp.utils.convertors import *
 
 
-def to_js_type(term: Term) -> str:
+def to_ts_type(term: Term) -> str:
     """Maps an Actus term's type to it's js equivalent.
     
     """
@@ -33,7 +33,7 @@ def to_js_type(term: Term) -> str:
         return _map(term.scalar_type)
 
 
-def to_js_default(term: Term) -> str:
+def to_ts_default(term: Term) -> str:
     """Maps an Actus term's default value to it's js equivalent.
     
     """
@@ -60,14 +60,14 @@ def to_js_default(term: Term) -> str:
     return "null"
 
 
-def to_js_optional_flag(term: Term) -> str:
+def to_ts_optional_flag(term: Term) -> str:
     """Maps an Actus term to it's js optionality flag.
     
     """
     return "" if term.default else "?"
 
 
-def to_js_enum_member(member: EnumMember) -> str:
+def to_ts_enum_member(member: EnumMember) -> str:
     """Maps an enum member to a python safe enum member name.
     
     """

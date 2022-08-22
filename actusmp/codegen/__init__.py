@@ -1,7 +1,7 @@
 import enum
 import pathlib
 
-from actusmp.codegen.js import writer as javascript_writer
+from actusmp.codegen.ts import writer as typescript_writer
 from actusmp.codegen.py import writer as python_writer
 from actusmp.codegen.rs import writer as rust_writer
 from actusmp.dictionary import get_dictionary
@@ -11,14 +11,14 @@ class TargetLanguage(enum.Enum):
     """Enumeration over set of supported language targets.
     
     """
-    javascript = enum.auto()
+    typescript = enum.auto()
     python = enum.auto()
     rust = enum.auto()
 
 
 # Map: target language type <-> code generator.
 _WRITERS = {
-    TargetLanguage.javascript: javascript_writer,
+    TargetLanguage.typescript: typescript_writer,
     TargetLanguage.python: python_writer,
     TargetLanguage.rust: rust_writer,
 }

@@ -3,20 +3,20 @@ import pathlib
 
 from actusmp.model import Dictionary
 
-from actusmp.codegen.js.generator import gen_typeset_core_enum
-from actusmp.codegen.js.generator import gen_typeset_core_enum_index
+from actusmp.codegen.ts.generator import gen_typeset_core_enum
+from actusmp.codegen.ts.generator import gen_typeset_core_enum_index
 
-from actusmp.codegen.js.generator import gen_typeset_core_index
-from actusmp.codegen.js.generator import gen_typeset_core_states
-from actusmp.codegen.js.generator import gen_typeset_termsets
-from actusmp.codegen.js.generator import gen_typeset_pkg_init_termsets
-from actusmp.codegen.js.generator import gen_typeset_enums
-from actusmp.codegen.js.generator import gen_typeset_pkg_init_enums
-from actusmp.codegen.js.generator import gen_typeset_pkg_init
-from actusmp.codegen.js.generator import gen_funcset_pkg_init
-from actusmp.codegen.js.generator import gen_funcset_stubs_1
-from actusmp.codegen.js.generator import gen_funcset_stubs_2
-from actusmp.codegen.js.generator import gen_funcset_stubs_pkg_init
+from actusmp.codegen.ts.generator import gen_typeset_core_index
+from actusmp.codegen.ts.generator import gen_typeset_core_states
+from actusmp.codegen.ts.generator import gen_typeset_termsets
+from actusmp.codegen.ts.generator import gen_typeset_pkg_init_termsets
+from actusmp.codegen.ts.generator import gen_typeset_enums
+from actusmp.codegen.ts.generator import gen_typeset_pkg_init_enums
+from actusmp.codegen.ts.generator import gen_typeset_pkg_init
+from actusmp.codegen.ts.generator import gen_funcset_pkg_init
+from actusmp.codegen.ts.generator import gen_funcset_stubs_1
+from actusmp.codegen.ts.generator import gen_funcset_stubs_2
+from actusmp.codegen.ts.generator import gen_funcset_stubs_pkg_init
 from actusmp.utils import fsys
 from actusmp.utils.convertors import to_pascal_case
 
@@ -133,13 +133,13 @@ def write_funcset(
     def _yield_stubs_2():
         for _, code_block in gen_funcset_stubs_2(dictionary):
             yield \
-                dest / "funcset" / "main.js", \
+                dest / "funcset" / "main.ts", \
                 code_block
 
     def _yield_stubs_index():
         for _, code_block in gen_funcset_stubs_pkg_init(dictionary, path_to_java_funcs):
             yield \
-                dest / "funcset" / "index.js", \
+                dest / "funcset" / "index.ts", \
                 code_block
 
     # Prepare file system.

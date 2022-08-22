@@ -6,7 +6,7 @@ from actusmp.model import Dictionary
 from actusmp.model import Enum
 from actusmp.model import FunctionType
 from actusmp.model import Term
-from actusmp.codegen.js import convertors
+from actusmp.codegen.ts import convertors
 from actusmp.utils import fsys
 
 
@@ -51,7 +51,7 @@ def gen_typeset_core_states(dictionary: Dictionary) -> str:
 
 
 def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
-    """Generates: `pyactus.typeset.enums.{enums}.js`.
+    """Generates: `pyactus.typeset.enums.{enums}.ts`.
     
     """
     tmpl = fsys.get_template("typeset/enum.txt")
@@ -60,7 +60,7 @@ def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
 
 
 def gen_typeset_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.typeset.terms.{contract}.js`.
+    """Generates: `pyactus.typeset.terms.{contract}.ts`.
     
     """
     tmpl = fsys.get_template("typeset/termset.txt")
@@ -69,7 +69,7 @@ def gen_typeset_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
 
 
 def gen_typeset_pkg_init(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.index.js`.
+    """Generates: `pyactus.typeset.index.ts`.
     
     """
     tmpl = fsys.get_template("typeset/pkg_init.txt")
@@ -78,7 +78,7 @@ def gen_typeset_pkg_init(dictionary: Dictionary) -> str:
 
 
 def gen_typeset_pkg_init_enums(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.enums.index.js`.
+    """Generates: `pyactus.typeset.enums.index.ts`.
     
     """
     tmpl = fsys.get_template("typeset/pkg_init_enums.txt")
@@ -87,7 +87,7 @@ def gen_typeset_pkg_init_enums(dictionary: Dictionary) -> str:
 
 
 def gen_typeset_pkg_init_termsets(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.terms.index.js`.
+    """Generates: `pyactus.typeset.terms.index.ts`.
     
     """
     tmpl = fsys.get_template("typeset/pkg_init_termsets.txt")
@@ -96,7 +96,7 @@ def gen_typeset_pkg_init_termsets(dictionary: Dictionary) -> str:
 
 
 def gen_funcset_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.typeset.classes.{contract}.js`.
+    """Generates: `pyactus.typeset.classes.{contract}.ts`.
     
     """
     tmpl = fsys.get_template("funcset/pkg_init.txt")
@@ -105,7 +105,7 @@ def gen_funcset_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathlib.Pat
 
 
 def gen_funcset_stubs_1(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.funcs.{contract}.{func}_{event}_{contract}.js`.
+    """Generates: `pyactus.funcs.{contract}.{func}_{event}_{contract}.ts`.
     
     """
     tmpl_set = {
@@ -120,7 +120,7 @@ def gen_funcset_stubs_1(dictionary: Dictionary, path_to_java_funcs: pathlib.Path
 
 
 def gen_funcset_stubs_2(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.funcs.{contract}.main.js`.
+    """Generates: `pyactus.funcs.{contract}.main.ts`.
     
     """
     tmpl = fsys.get_template("funcset/stub_main.txt")
@@ -130,7 +130,7 @@ def gen_funcset_stubs_2(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
 
 
 def gen_funcset_stubs_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.funcs.{contract}.index.js`.
+    """Generates: `pyactus.funcs.{contract}.index.ts`.
     
     """
     tmpl = fsys.get_template("funcset/stub_pkg_init.txt")
