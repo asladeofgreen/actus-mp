@@ -11,7 +11,7 @@ def to_ts_type(term: Term) -> str:
     """
     def _map(typedef: ScalarType):
         if typedef == ScalarType.ContractReference:
-            return "contracts.ContractReference"
+            return "core.ContractReference"
         elif typedef == ScalarType.Cycle:
             return "core.Cycle"
         elif typedef == ScalarType.Enum:
@@ -28,7 +28,7 @@ def to_ts_type(term: Term) -> str:
             raise ValueError(f"Unsupported term scalar type: {term.scalar_type} :: {typedef}")        
 
     if term.is_array:
-        return f"typing.List[{_map(term.scalar_type)}]"
+        return f"Array<{_map(term.scalar_type)}>"
     else:
         return _map(term.scalar_type)
 
@@ -44,7 +44,10 @@ def to_ts_default(term: Term) -> str:
         print(f"WARNING: enum member default is incorrect, reverting to option 0 :: {term}")
         return term.allowed_values[0].acronym
 
-    if term.default:
+    if term.is_array:
+        return "[]"
+
+    elif term.default:
         if term.scalar_type == ScalarType.Cycle:
             return ""
         elif term.scalar_type == ScalarType.Enum:
@@ -56,8 +59,11 @@ def to_ts_default(term: Term) -> str:
                 return float(term.default)
             except:
                 return float(0)
+        else:
+            return f"'TODO: format default {term.scalar_type} :: {term.default}'"
 
-        return f"'TODO: format {term.scalar_type} :: {term.default}'"
+    elif term.scalar_type == ScalarType.Real:
+        return float(0)
     
     return "null"
 

@@ -25,9 +25,9 @@ def gen_funcs_stubs(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) ->
         FunctionType.STF: fsys.get_template("func_stub_stf.txt")
     }
     iterator = fsys.yield_funcset(dictionary, path_to_java_funcs)
-    for contract, func_type, event_type, suffix in iterator:
-        yield contract, func_type, event_type, suffix, tmpl_set[func_type].render(
-            contract=contract,
+    for defn, func_type, event_type, suffix in iterator:
+        yield defn, func_type, event_type, suffix, tmpl_set[func_type].render(
+            defn=defn,
             event_type=event_type,
             suffix=suffix,
             utils=convertor,
