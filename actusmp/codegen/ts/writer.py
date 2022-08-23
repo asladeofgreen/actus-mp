@@ -15,12 +15,12 @@ def write_typeset(dest: pathlib.Path, dictionary: Dictionary):
     """
     def _yield_code():
         # Termsets.
-        for defn, code_block in generator.gen_contracts_terms(dictionary):
+        for defn, code_block in generator.gen_termsets(dictionary):
             yield code_block, \
                   dest / "terms" / f"{defn.type_info.acronym.lower()}.ts"
         
         # Termset index.
-        yield generator.gen_contracts_terms_index(dictionary), \
+        yield generator.gen_termsets_index(dictionary), \
               dest / "terms" / "index.ts"
 
         # Enums.
@@ -58,23 +58,23 @@ def write_funcset(
 
     def _yield_code():
         # Index.
-        yield generator.gen_funcset_index(dictionary, path_to_java_funcs), \
+        yield generator.gen_funcs_index(dictionary, path_to_java_funcs), \
               dest / "funcs" / "index.ts"
             
         # Function stubs.
-        for defn, func_type, event_type, suffix, code_block in generator.gen_func_stubs(dictionary, path_to_java_funcs):
+        for defn, func_type, event_type, suffix, code_block in generator.gen_funcs_stubs(dictionary, path_to_java_funcs):
             fname = f"{func_type.name.lower()}_{event_type}"
             fname = f"{fname}_{suffix}.ts" if suffix else f"{fname}.ts"
             yield code_block, \
                     dest / "funcs" / f"{defn.type_info.acronym.lower()}" / fname
                     
         # Function stubs: index.
-        for defn, code_block in generator.gen_func_stubs_index(dictionary, path_to_java_funcs):
+        for defn, code_block in generator.gen_funcs_stubs_index(dictionary, path_to_java_funcs):
             yield code_block, \
                   dest / "funcs" / f"{defn.type_info.acronym.lower()}" / "index.ts" 
                   
         # Function stubs: main.
-        for defn, code_block in generator.gen_func_stubs_main(dictionary):
+        for defn, code_block in generator.gen_funcs_stubs_main(dictionary):
             yield code_block, \
                   dest / "funcs" / f"{defn.type_info.acronym.lower()}" / "main.ts" 
 

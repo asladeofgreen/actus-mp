@@ -3,6 +3,8 @@ from actusmp.model.applicability import ApplicableTermInfo
 from actusmp.model.contract import Contract
 from actusmp.model.contract import ContractSet
 from actusmp.model.dictionary import Dictionary
+from actusmp.model.entity import Entity
+from actusmp.model.entity import IterableEntity
 from actusmp.model.enum_ import Enum
 from actusmp.model.enum_ import EnumMember
 from actusmp.model.funcs import FunctionType

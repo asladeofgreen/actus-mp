@@ -41,3 +41,4 @@ export const executeStep = (events: Array<Event>, terms: Termset, observer: obje
 export const getSchedule = (toDate: Date, terms: Termset): Array<Event> => {
     throw new Error("TODO: implement");
 };
+

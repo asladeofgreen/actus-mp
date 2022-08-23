@@ -3,44 +3,23 @@ import typing
 
 from actusmp.model import Contract
 from actusmp.model import Dictionary
+from actusmp.model import IterableEntity
 from actusmp.model import FunctionType
-from actusmp.model import Term
 from actusmp.codegen.ts import convertor
 from actusmp.utils import fsys
 
 
-def gen_contracts_terms_index(dictionary: Dictionary) -> str:
-    tmpl = fsys.get_template("termset_index.txt")
-
-    return tmpl.render(dictionary=dictionary, utils=convertor)
-
 def gen_enums(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-    tmpl = fsys.get_template("enum.txt")
-    for defn in dictionary.enum_set:
-        yield defn, tmpl.render(defn=defn, utils=convertor)
+    for defn, code_block in _gen_many("enum.txt", dictionary.enum_set):
+        yield defn, code_block
 
 def gen_enums_index(dictionary: Dictionary) -> str:
-    tmpl = fsys.get_template("enum_index.txt")
+    return _gen_one("enum_index.txt",dictionary)
 
-    return tmpl.render(utils=convertor, dictionary=dictionary)
+def gen_funcs_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
+    return _gen_one("func_index.txt",dictionary)
 
-def gen_state_space(dictionary: Dictionary) -> str:
-    tmpl = fsys.get_template("state_space.txt")
-
-    return tmpl.render(utils=convertor, dictionary=dictionary)
-
-def gen_contracts_terms(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-    tmpl = fsys.get_template("termset.txt")
-    for defn in dictionary.contract_set:
-        yield defn, tmpl.render(defn=defn, utils=convertor)
-
-
-def gen_funcset_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    tmpl = fsys.get_template("func_index.txt")
-
-    return tmpl.render(dictionary=dictionary, utils=convertor)
-
-def gen_func_stubs(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
+def gen_funcs_stubs(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
     tmpl_set = {
         FunctionType.POF: fsys.get_template("func_stub_pof.txt"),
         FunctionType.STF: fsys.get_template("func_stub_stf.txt")
@@ -54,13 +33,28 @@ def gen_func_stubs(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> 
             utils=convertor,
             )
 
-def gen_func_stubs_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    tmpl = fsys.get_template("func_stub_index.txt")
-    for defn in dictionary.contract_set:
-        iterator = fsys.yield_funcset(dictionary, path_to_java_funcs, defn)
-        yield defn, tmpl.render(utils=convertor, contract=defn, funcset_iterator=iterator)
-        
-def gen_func_stubs_main(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-    tmpl = fsys.get_template("func_stub_main.txt")
-    for defn in dictionary.contract_set:
+def gen_funcs_stubs_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
+    for defn, code_block in _gen_many("func_stub_index.txt", dictionary.contract_set):
+        yield defn, code_block
+
+def gen_funcs_stubs_main(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
+    for defn, code_block in _gen_many("func_stub_main.txt", dictionary.contract_set):
+        yield defn, code_block
+
+def gen_state_space(dictionary: Dictionary) -> str:
+    return _gen_one("state_space.txt",dictionary)
+
+def gen_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
+    for defn, code_block in _gen_many("termset.txt", dictionary.contract_set):
+        yield defn, code_block
+
+def gen_termsets_index(dictionary: Dictionary) -> str:
+    return _gen_one("termset_index.txt",dictionary)
+
+def _gen_many(tmpl: str, definitions: IterableEntity):
+    tmpl = fsys.get_template(tmpl)
+    for defn in definitions:
         yield defn, tmpl.render(defn=defn, utils=convertor)
+
+def _gen_one(tmpl: str, dictionary: Dictionary):
+    return fsys.get_template(tmpl).render(dictionary=dictionary, utils=convertor)
