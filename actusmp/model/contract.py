@@ -1,8 +1,9 @@
 import dataclasses
 import typing
 
-from actusmp.model.term import TermSet
+from actusmp.model.scalar_type import ScalarType
 from actusmp.model.taxonomy import ContractTypeInfo
+from actusmp.model.term import TermSet
 
 
 @dataclasses.dataclass
@@ -24,6 +25,18 @@ class Contract():
     def __str__(self) -> str:
         """Instance string representation."""
         return f"contract|{self.type_info.acronym}|{self.type_info.identifier}|{len(self.term_set)}"
+
+    def uses_scalar_type(self, scalar_type: ScalarType) -> bool:
+        """Returns flag indicating whether an associated term has a matching scalar type.
+        
+        :scalar_type: A scalar type potentially associated with a term.
+        :returns: True if matched else False.
+
+        """
+        for term in self.term_set:
+            if term.scalar_type == scalar_type:
+                return True
+        return False
 
 
 @dataclasses.dataclass

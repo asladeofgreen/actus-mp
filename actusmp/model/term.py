@@ -26,9 +26,22 @@ class Term(Entity):
     scalar_type: ScalarType
 
     @property
-    def is_enum(self):
+    def has_default(self) -> bool:
+        """Returns flag indicating whether the term field has a default value."""
+        if self.scalar_type in (ScalarType.Cycle, ScalarType.Period):
+            return False
+        return self.default is not None
+
+    @property
+    def is_enum(self) -> bool:
         """Returns flag indicating whether the term field type is an enumeration."""
         return self.scalar_type == ScalarType.Enum
+
+    @property
+    def members(self):
+        """Helper attribute when processing enum terms."""
+        return self.allowed_values if self.is_enum else []
+
 
 
 @dataclasses.dataclass

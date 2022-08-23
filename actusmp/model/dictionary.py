@@ -64,31 +64,11 @@ class Dictionary():
         """Set of enumerations defined within dictionary."""
         targets = \
             [i for i in self.term_set if i.is_enum] + \
-            [self.contract_reference_role, self.contract_reference_type]
-
-        # targets = \
-        #     [i for i in self.term_set if i.is_enum] + \
-        #     [self.contract_event_type, self.contract_reference_role, self.contract_reference_type]
+                [
+                self.contract_event_type,
+                self.contract_reference_role,
+                self.contract_reference_type,
+            ]
 
         for target in sorted(targets, key=lambda i: i.identifier):
             yield target
-
-    @property
-    def enum_set_core(self) -> typing.List[Enum]:
-        """Set of core enumerations defined within dictionary."""
-        return sorted([
-            self.contract_event_type,
-            self.contract_performance,
-            self.contract_reference_role,
-            self.contract_reference_type,
-            self.contract_role,
-            self.contract_type,
-        ], key=lambda i: i.identifier)
-
-    @property
-    def enum_set_terms(self) -> typing.Generator:
-        """Set of term enumerations defined within dictionary."""
-        # TODO: remove identifier in check as this should be derivable.
-        for defn in self.term_set:
-            if defn.is_enum and defn not in self.enum_set_core and defn.identifier not in {"contractPerformance", "contractType", "contractRole"}:
-                yield defn

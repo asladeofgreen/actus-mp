@@ -1,0 +1,43 @@
+/**
+ *  N.B. Auto-generated using actus-mp
+ */
+
+import * as core from '../core';
+import * as enums from '../enums';
+
+/**
+ *
+ *  Set of applicable terms: {{defn.type_info.acronym}} -> {{defn.type_info.name}}.
+ *
+ *  {{defn.type_info.description}}
+ *
+ */
+export class {{utils.to_camel_case(defn.type_info.identifier)}}Termset extends core.Termset {
+{% if defn.term_set %}
+{% for term in defn.term_set %}
+{% if term.identifier not in ("contractID", "contractType", "contractRole", "contractPerformance", ) %}
+{% if term.short_description %}
+    // {{term.name}} :: {{term.short_description}}.
+{% else %}
+    // {{term.name}}.
+{% endif %}
+    {{utils.to_pascal_case(term.identifier)}}{{utils.to_ts_optional_flag(term)}}: {{utils.to_ts_type(term)}}{% if term.has_default %} = {{utils.to_ts_default(term)}}{% endif %};
+{% if term != defn.term_set[-1] %}
+
+{% endif %}
+{% endif %}
+{% endfor %}
+    // Instance constructor.
+    constructor(
+        contractID: string,
+        contractType: enums.ContractType,
+        contractRole: enums.ContractRole,
+        contractPerformance: enums.ContractPerformance) {
+        super(contractID, contractType, contractRole, contractPerformance);
+    }
+{% else %}
+    // WARNING:: This contract type has not yet been formally defined.  This class is thus simply a placeholder.
+    // raise NotImplementedError("WARNING: Standard does not yet support this contract type.")
+{% endif %}
+}
+

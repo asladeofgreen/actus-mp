@@ -82,7 +82,7 @@ def gen_funcset_stubs_1(dictionary: Dictionary, path_to_java_funcs: pathlib.Path
         FunctionType.STF: fsys.get_template("funcset/stub_stf.txt")
     }
 
-    iterator = _yield_funcset(dictionary, path_to_java_funcs)
+    iterator = fsys.yield_funcset(dictionary, path_to_java_funcs)
     for contract, func_type, event_type, suffix in iterator:
         code_block = tmpl_set[func_type].render(utils=convertors, contract=contract, event_type=event_type, suffix=suffix)
         yield contract, func_type, event_type, suffix, code_block
@@ -106,30 +106,7 @@ def gen_funcset_stubs_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathl
     tmpl = fsys.get_template("funcset/stub_pkg_init.txt")
 
     for contract in dictionary.contract_set:
-        funcset_iterator = _yield_funcset(dictionary, path_to_java_funcs, contract)
+        funcset_iterator = fsys.yield_funcset(dictionary, path_to_java_funcs, contract)
         code_block = tmpl.render(utils=convertors, contract=contract, funcset_iterator=funcset_iterator)
         if len(code_block) > 0:
             yield contract, code_block
-
-
-def _yield_funcset(
-    dictionary: Dictionary,
-    path_to_java_funcs: pathlib.Path,
-    filter: Contract = None
-) -> typing.Tuple[Contract, FunctionType, str]:
-    """Yields set of functions for which code can be emitted.
-
-    In actus-core.functions there is a sub-package for each supported contract type.
-    Within each sub-package is the set of contract specific functions.  Each such
-    function is named: {func-type}_{event-type}_{contract-type}.java.
-
-    """
-    for contract in dictionary.contract_set:
-        if filter and filter != contract:
-            continue
-        path_to_java_funcs_contract = path_to_java_funcs / contract.type_info.acronym.lower()
-        if path_to_java_funcs_contract.exists() and path_to_java_funcs_contract.is_dir():
-            iterator = (i.stem.split("_") for i in path_to_java_funcs_contract.iterdir())
-            for (func_type, event_type, suffix) in iterator:
-                suffix = suffix[-1] if suffix[-1].isnumeric() else ""
-                yield contract, FunctionType[func_type], event_type, suffix

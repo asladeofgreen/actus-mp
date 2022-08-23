@@ -173,11 +173,7 @@ def _get_term_set(accessor: Accessor) -> TermSet:
     """Decodes set of terms from Actus dictionary.
     
     """
-    def _map_default_value(
-        is_array: bool,
-        scalar_type: ScalarType,
-        value: str
-        ):
+    def _map_default(is_array: bool, scalar_type: ScalarType, value: str):
         if value is None:
             return [] if is_array else None
         elif scalar_type == ScalarType.Enum:
@@ -191,11 +187,7 @@ def _get_term_set(accessor: Accessor) -> TermSet:
             print(f"TODO: map default value: {is_array} {scalar_type} {value}")
             return value
 
-    def _map_allowed_value(
-        scalar_type: ScalarType,
-        value: typing.Union[str, dict],
-        default: typing.Union[str, float, list]
-        ):
+    def _map_allowed(scalar_type: ScalarType, value: typing.Union[str, dict], default: typing.Union[str, float, list]):
         if scalar_type == ScalarType.Enum:
             return EnumMember(
                 acronym=value["acronym"],
@@ -205,17 +197,18 @@ def _get_term_set(accessor: Accessor) -> TermSet:
                 name=value["name"],
                 option=value["option"]
             )
-        return value
+        else:
+            return value
 
     def _map_term(obj: dict) -> Term:
         is_array: bool = obj["type"].endswith("[]")
         scalar_type_raw = obj["type"] if not is_array else obj["type"][:-2]
         scalar_type=ScalarType[scalar_type_raw]
-        default_value=_map_default_value(is_array, scalar_type, obj["default"])
+        default_value=_map_default(is_array, scalar_type, obj["default"])
 
         return Term(
             acronym=obj["acronym"],
-            allowed_values=[_map_allowed_value(scalar_type, i, default_value) for i in obj["allowedValues"]],
+            allowed_values=[_map_allowed(scalar_type, i, default_value) for i in obj["allowedValues"]],
             default=default_value,
             description=obj.get("description", obj["name"]).replace("\n", ""),
             group_id=obj["group"],

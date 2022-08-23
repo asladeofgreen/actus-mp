@@ -3,163 +3,64 @@ import typing
 
 from actusmp.model import Contract
 from actusmp.model import Dictionary
-from actusmp.model import Enum
 from actusmp.model import FunctionType
 from actusmp.model import Term
-from actusmp.codegen.ts import convertors
+from actusmp.codegen.ts import convertor
 from actusmp.utils import fsys
 
 
-def gen_typeset_core_enum(dictionary: Dictionary, defn: Enum) -> str:
-    """Generates: `pyactus.typeset.core.enums.{defn.identifier}.ts`.
-    
-    """
-    tmpl = fsys.get_template("typeset/core_enum.txt")
+def gen_contracts_terms_index(dictionary: Dictionary) -> str:
+    tmpl = fsys.get_template("termset_index.txt")
 
-    return tmpl.render(
-        utils=convertors,
-        dictionary=dictionary,
-        defn=defn,
-        )
+    return tmpl.render(dictionary=dictionary, utils=convertor)
 
+def gen_enums(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
+    tmpl = fsys.get_template("enum.txt")
+    for defn in dictionary.enum_set:
+        yield defn, tmpl.render(defn=defn, utils=convertor)
 
-def gen_typeset_core_enum_index(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.enums.index.ts`.
-    
-    """
-    tmpl = fsys.get_template("typeset/core_enum_index.txt")
+def gen_enums_index(dictionary: Dictionary) -> str:
+    tmpl = fsys.get_template("enum_index.txt")
 
-    return tmpl.render(utils=convertors, dictionary=dictionary)
+    return tmpl.render(utils=convertor, dictionary=dictionary)
 
+def gen_state_space(dictionary: Dictionary) -> str:
+    tmpl = fsys.get_template("state_space.txt")
 
-def gen_typeset_core_index(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.core.index`.
-    
-    """
-    tmpl = fsys.get_template("typeset/core_index.txt")
+    return tmpl.render(utils=convertor, dictionary=dictionary)
 
-    return tmpl.render(utils=convertors, dictionary=dictionary)
+def gen_contracts_terms(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
+    tmpl = fsys.get_template("termset.txt")
+    for defn in dictionary.contract_set:
+        yield defn, tmpl.render(defn=defn, utils=convertor)
 
 
-def gen_typeset_core_states(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.core.states`.
-    
-    """
-    tmpl = fsys.get_template("typeset/core_states.txt")
+def gen_funcset_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
+    tmpl = fsys.get_template("func_index.txt")
 
-    return tmpl.render(utils=convertors, dictionary=dictionary)
+    return tmpl.render(dictionary=dictionary, utils=convertor)
 
-
-def gen_typeset_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
-    """Generates: `pyactus.typeset.enums.{enums}.ts`.
-    
-    """
-    tmpl = fsys.get_template("typeset/enum.txt")
-    for definition in dictionary.enum_set_terms:
-        yield definition, tmpl.render(utils=convertors, definition=definition)
-
-
-def gen_typeset_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.typeset.terms.{contract}.ts`.
-    
-    """
-    tmpl = fsys.get_template("typeset/termset.txt")
-    for contract in dictionary.contract_set:
-        yield contract, tmpl.render(utils=convertors, contract=contract)
-
-
-def gen_typeset_pkg_init(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.index.ts`.
-    
-    """
-    tmpl = fsys.get_template("typeset/pkg_init.txt")
-
-    return tmpl.render(utils=convertors, dictionary=dictionary)
-
-
-def gen_typeset_pkg_init_enums(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.enums.index.ts`.
-    
-    """
-    tmpl = fsys.get_template("typeset/pkg_init_enums.txt")
-
-    return tmpl.render(utils=convertors, dictionary=dictionary)
-
-
-def gen_typeset_pkg_init_termsets(dictionary: Dictionary) -> str:
-    """Generates: `pyactus.typeset.terms.index.ts`.
-    
-    """
-    tmpl = fsys.get_template("typeset/pkg_init_termsets.txt")
-
-    return tmpl.render(utils=convertors, dictionary=dictionary)
-
-
-def gen_funcset_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.typeset.classes.{contract}.ts`.
-    
-    """
-    tmpl = fsys.get_template("funcset/pkg_init.txt")
-
-    return tmpl.render(dictionary=dictionary, utils=convertors)
-
-
-def gen_funcset_stubs_1(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.funcs.{contract}.{func}_{event}_{contract}.ts`.
-    
-    """
+def gen_func_stubs(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
     tmpl_set = {
-        FunctionType.POF: fsys.get_template("funcset/stub_pof.txt"),
-        FunctionType.STF: fsys.get_template("funcset/stub_stf.txt")
+        FunctionType.POF: fsys.get_template("func_stub_pof.txt"),
+        FunctionType.STF: fsys.get_template("func_stub_stf.txt")
     }
-
-    iterator = _yield_funcset(dictionary, path_to_java_funcs)
+    iterator = fsys.yield_funcset(dictionary, path_to_java_funcs)
     for contract, func_type, event_type, suffix in iterator:
-        code_block = tmpl_set[func_type].render(utils=convertors, contract=contract, event_type=event_type, suffix=suffix)
-        yield contract, func_type, event_type, suffix, code_block
+        yield contract, func_type, event_type, suffix, tmpl_set[func_type].render(
+            contract=contract,
+            event_type=event_type,
+            suffix=suffix,
+            utils=convertor,
+            )
 
-
-def gen_funcset_stubs_2(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.funcs.{contract}.main.ts`.
-    
-    """
-    tmpl = fsys.get_template("funcset/stub_main.txt")
-    for contract in dictionary.contract_set:
-        code_block = tmpl.render(utils=convertors, contract=contract)
-        yield contract, code_block
-
-
-def gen_funcset_stubs_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    """Generates: `pyactus.funcs.{contract}.index.ts`.
-    
-    """
-    tmpl = fsys.get_template("funcset/stub_pkg_init.txt")
-
-    for contract in dictionary.contract_set:
-        funcset_iterator = _yield_funcset(dictionary, path_to_java_funcs, contract)
-        code_block = tmpl.render(utils=convertors, contract=contract, funcset_iterator=funcset_iterator)
-        if len(code_block) > 0:
-            yield contract, code_block
-
-
-def _yield_funcset(
-    dictionary: Dictionary,
-    path_to_java_funcs: pathlib.Path,
-    filter: Contract = None
-) -> typing.Tuple[Contract, FunctionType, str]:
-    """Yields set of functions for which code can be emitted.
-
-    In actus-core.functions there is a sub-package for each supported contract type.
-    Within each sub-package is the set of contract specific functions.  Each such
-    function is named: {func-type}_{event-type}_{contract-type}.java.
-
-    """
-    for contract in dictionary.contract_set:
-        if filter and filter != contract:
-            continue
-        path_to_java_funcs_contract = path_to_java_funcs / contract.type_info.acronym.lower()
-        if path_to_java_funcs_contract.exists() and path_to_java_funcs_contract.is_dir():
-            iterator = (i.stem.split("_") for i in path_to_java_funcs_contract.iterdir())
-            for (func_type, event_type, suffix) in iterator:
-                suffix = suffix[-1] if suffix[-1].isnumeric() else ""
-                yield contract, FunctionType[func_type], event_type, suffix
+def gen_func_stubs_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
+    tmpl = fsys.get_template("func_stub_index.txt")
+    for defn in dictionary.contract_set:
+        iterator = fsys.yield_funcset(dictionary, path_to_java_funcs, defn)
+        yield defn, tmpl.render(utils=convertor, contract=defn, funcset_iterator=iterator)
+        
+def gen_func_stubs_main(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
+    tmpl = fsys.get_template("func_stub_main.txt")
+    for defn in dictionary.contract_set:
+        yield defn, tmpl.render(defn=defn, utils=convertor)
