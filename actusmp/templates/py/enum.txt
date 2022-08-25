@@ -10,7 +10,7 @@ class {{utils.to_camel_case(defn.identifier)}}(enum.Enum):
     {{defn.description}}
 
     """
-{% for member in defn.allowed_values %}
+{% for member in defn.members %}
     # {{member.name}} :: {{member.description.strip()}}
     {{utils.to_py_enum_member(defn, member)}} = {{member.option}}
 

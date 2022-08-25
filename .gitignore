@@ -134,3 +134,4 @@ dmypy.json
 # temporary files
 tmp/
 tmp.*
+jobs/generate.sh

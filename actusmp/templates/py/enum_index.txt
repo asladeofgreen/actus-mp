@@ -4,15 +4,11 @@
 {% for defn in dictionary.enum_set %}
 from pyactus.enums.{{utils.to_underscore_case(defn.identifier)}} import {{utils.to_camel_case(defn.identifier)}}
 {% endfor %}
-from pyactus.enums.reference_role import ReferenceRole
-from pyactus.enums.reference_type import ReferenceType
-
 
 # Set of all supported enumerations.
 ENUM_SET = {
 {% for defn in dictionary.enum_set %}
     {{utils.to_camel_case(defn.identifier)}},
 {% endfor %}
-    ReferenceRole,
-    ReferenceType,
 }
+

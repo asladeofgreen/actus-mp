@@ -14,12 +14,12 @@ def gen_enums(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
         yield defn, code_block
 
 def gen_enums_index(dictionary: Dictionary) -> str:
-    return _gen_one("enum_index.txt",dictionary)
+    return _gen_one("enum_index.txt", dictionary)
 
-def gen_funcs_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    return _gen_one("func_index.txt",dictionary)
+def gen_func_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
+    return _gen_one("func_index.txt", dictionary)
 
-def gen_funcs_stubs(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
+def gen_func_stubs(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
     tmpl_set = {
         FunctionType.POF: fsys.get_template("func_stub_pof.txt"),
         FunctionType.STF: fsys.get_template("func_stub_stf.txt")
@@ -33,23 +33,23 @@ def gen_funcs_stubs(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) ->
             utils=convertor,
             )
 
-def gen_funcs_stubs_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
+def gen_func_stubs_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
     for defn, code_block in _gen_many("func_stub_index.txt", dictionary.contract_set):
         yield defn, code_block
 
-def gen_funcs_stubs_main(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
+def gen_func_stubs_main(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     for defn, code_block in _gen_many("func_stub_main.txt", dictionary.contract_set):
         yield defn, code_block
 
 def gen_state_space(dictionary: Dictionary) -> str:
-    return _gen_one("state_space.txt",dictionary)
+    return _gen_one("state_space.txt", dictionary)
 
 def gen_termsets(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     for defn, code_block in _gen_many("termset.txt", dictionary.contract_set):
         yield defn, code_block
 
 def gen_termsets_index(dictionary: Dictionary) -> str:
-    return _gen_one("termset_index.txt",dictionary)
+    return _gen_one("termset_index.txt", dictionary)
 
 def _gen_many(tmpl: str, definitions: IterableEntity):
     tmpl = fsys.get_template(tmpl)

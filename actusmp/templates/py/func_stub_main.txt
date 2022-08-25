@@ -4,16 +4,12 @@
 import datetime
 import typing
 
-from pyactus.typeset import Event
-from pyactus.typeset import {{utils.to_camel_case(contract.type_info.identifier)}}Termset as ContractTermset
+from pyactus.core import Event
+from pyactus.terms import {{utils.to_camel_case(defn.type_info.identifier)}}Termset as ContractTermset
 
 
-def execute_step(
-    events: typing.List[Event],
-    term_set: ContractTermset,
-    observer: object
-) -> typing.List[Event]:
-    """Applies a set of contract events to the current state of a contract.
+def execute_step(events: typing.List[Event], term_set: ContractTermset, observer: object) -> typing.List[Event]:
+    """Applies a set of contract events to the current state of a defn.
 
     :param events: A list of contract events that should be applied in time sequence.
     :param term_set: The contract term set.

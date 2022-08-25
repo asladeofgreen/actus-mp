@@ -1,16 +1,7 @@
 import pathlib
 
 from actusmp.model import Dictionary
-from actusmp.codegen.py.generator import gen_typeset_termsets
-from actusmp.codegen.py.generator import gen_typeset_pkg_init_termsets
-from actusmp.codegen.py.generator import gen_typeset_core_states
-from actusmp.codegen.py.generator import gen_typeset_enums
-from actusmp.codegen.py.generator import gen_typeset_pkg_init_enums
-from actusmp.codegen.py.generator import gen_typeset_pkg_init
-from actusmp.codegen.py.generator import gen_funcset_pkg_init
-from actusmp.codegen.py.generator import gen_funcset_stubs_1
-from actusmp.codegen.py.generator import gen_funcset_stubs_2
-from actusmp.codegen.py.generator import gen_funcset_stubs_pkg_init
+from actusmp.codegen.py import generator
 from actusmp.utils import fsys
 from actusmp.utils.convertors import to_underscore_case
 
@@ -22,16 +13,30 @@ def write_typeset(dest: pathlib.Path, dictionary: Dictionary):
     :param dictionary: Deserialised actus-dictionary.json.
 
     """
-    for writer in (
-        _write_typeset_dirs,
-        _write_typeset_pkg_init,
-        _write_typeset_termsets,
-        _write_typeset_termsets_pkg_init,
-        _write_typeset_states,
-        _write_typeset_enums,
-        _write_typeset_enums_pkg_init,
-    ):
-        writer(dictionary, dest)
+    def _yield_code():
+        # Terms.
+        for defn, code_block in generator.gen_terms(dictionary):
+            yield code_block, dest / "terms" / f"{defn.type_info.acronym.lower()}.py"
+        
+        # Terms index.
+        yield generator.gen_terms_index(dictionary), \
+              dest / "terms" / "__init__.py"
+
+        # Enums.
+        for defn, code_block in generator.gen_enums(dictionary):
+            yield code_block, \
+                  dest / "enums" / f"{to_underscore_case(defn.identifier)}.py"
+
+        # Enums index.
+        yield generator.gen_enums_index(dictionary), \
+              dest / "enums" / "__init__.py", \
+
+        # States.
+        yield generator.gen_state_space(dictionary), \
+              dest / "core" / "states.py"
+
+    fsys.write_code(_yield_code)
+
 
 
 def write_funcset(
@@ -51,131 +56,26 @@ def write_funcset(
     path_to_java_funcs = path_to_java_impl / "src" / "main" / "java" / "org" / "actus" / "functions"
     assert path_to_java_funcs.exists() and path_to_java_funcs.is_dir()
 
-    _write_funcset_pkg_init(dictionary, dest, path_to_java_funcs)
-    _write_funcset_stubs_1(dictionary, dest, path_to_java_funcs)
-    _write_funcset_stubs_2(dictionary, dest)
-    _write_funcset_stubs_pkg_init(dictionary, dest, path_to_java_funcs)
+    def _yield_code():
+        # Index.
+        yield generator.gen_func_index(dictionary, path_to_java_funcs), \
+              dest / "funcs" / "__init__.py"
 
+        # Function stubs.
+        for defn, func_type, event_type, suffix, code_block in generator.gen_func_stubs(dictionary, path_to_java_funcs):
+            fname = f"{func_type.name.lower()}_{event_type}"
+            fname = f"{fname}_{suffix}.ts" if suffix else f"{fname}.py"
+            yield code_block, \
+                    dest / "funcs" / f"{defn.type_info.acronym.lower()}" / fname
 
-def _write_funcset_pkg_init(
-    dictionary: Dictionary,
-    dest: pathlib.Path,
-    path_to_java_funcs: pathlib.Path
-):
-    """Writes to `pyactus.funcset.{contract}.{func_type}_{event_type}_{contract}.py`.
-    
-    """
-    dpath = dest / "funcset"
-    dpath.mkdir(parents=True, exist_ok=True)
-    fpath = dpath / "__init__.py"
-    code_block = gen_funcset_pkg_init(dictionary, path_to_java_funcs)
-    fsys.write(fpath, code_block)
+        # Function stubs: index.
+        for defn, code_block in generator.gen_func_stubs_index(dictionary, path_to_java_funcs):
+            yield code_block, \
+                  dest / "funcs" / f"{defn.type_info.acronym.lower()}" / "__init__.py" 
 
+        # Function stubs: main.
+        for defn, code_block in generator.gen_func_stubs_main(dictionary):
+            yield code_block, \
+                  dest / "funcs" / f"{defn.type_info.acronym.lower()}" / "main.py" 
 
-def _write_funcset_stubs_1(
-    dictionary: Dictionary,
-    dest: pathlib.Path,
-    path_to_java_funcs: pathlib.Path
-):
-    """Writes to `pyactus.funcset.{contract}.{func_type}_{event_type}_{contract}.py`.
-    
-    """    
-    for contract, func_type, event_type, suffix, code_block in gen_funcset_stubs_1(dictionary, path_to_java_funcs):
-        dpath = dest / "funcset" / contract.type_info.acronym.lower()
-        dpath.mkdir(parents=True, exist_ok=True)
-        if suffix != "":
-            fpath = dpath / f"{func_type.name.lower()}_{event_type.lower()}_{suffix}.py"
-        else:
-            fpath = dpath / f"{func_type.name.lower()}_{event_type.lower()}.py"
-        fsys.write(fpath, code_block)
-
-
-def _write_funcset_stubs_2(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.funcset.{contract}.main.py`.
-    
-    """    
-    for contract, code_block in gen_funcset_stubs_2(dictionary):
-        dpath = dest / "funcset" / contract.type_info.acronym.lower()
-        dpath.mkdir(parents=True, exist_ok=True)
-        fpath = dpath / "main.py"
-        fsys.write(fpath, code_block)
-
-
-def _write_funcset_stubs_pkg_init(
-    dictionary: Dictionary,
-    dest: pathlib.Path,
-    path_to_java_funcs: pathlib.Path
-):
-    """Writes to `pyactus.funcset.{contract}.{func_type}_{event_type}_{contract}.py`.
-    
-    """    
-    for contract, code_block in gen_funcset_stubs_pkg_init(dictionary, path_to_java_funcs):
-        dpath = dest / "funcset" / contract.type_info.acronym.lower()
-        dpath.mkdir(parents=True, exist_ok=True)
-        fpath = dpath / "__init__.py"
-        fsys.write(fpath, code_block)
-
-
-def _write_typeset_dirs(_: Dictionary, dest: pathlib.Path):
-    """Writes directories to `pyactus.typeset`.
-    
-    """
-    for dpath in (
-        dest / "typeset" / "enums",
-        dest / "typeset" / "termsets"
-    ):
-        dpath.mkdir(parents=True, exist_ok=True)
-
-
-def _write_typeset_enums(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.typeset.enums.{enum}.py`.
-    
-    """
-    for term, code_block in gen_typeset_enums(dictionary):
-        fpath = dest / "typeset" / "enums" / f"{to_underscore_case(term.identifier)}.py"
-        fsys.write(fpath, code_block)
-
-
-def _write_typeset_enums_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.typeset.enums.__init__.py`.
-    
-    """
-    fpath = dest / "typeset" / "enums" / "__init__.py"
-    code_block = gen_typeset_pkg_init_enums(dictionary)
-    fsys.write(fpath, code_block)
-
-
-def _write_typeset_states(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.typeset.states.py`.
-    
-    """
-    fpath = dest / "typeset" / "states.py"
-    code_block = gen_typeset_core_states(dictionary)
-    fsys.write(fpath, code_block)
-
-
-def _write_typeset_termsets(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.typeset.termsets.{contract}.py`.
-    
-    """
-    for contract, code_block in gen_typeset_termsets(dictionary):
-        fpath = dest / "typeset" / "termsets" / f"{to_underscore_case(contract.type_info.identifier)}.py"
-        fsys.write(fpath, code_block)
-
-
-def _write_typeset_termsets_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.typeset.termsets.__init__.py`.
-    
-    """
-    fpath = dest / "typeset" / "termsets" / "__init__.py"
-    code_block = gen_typeset_pkg_init_termsets(dictionary)
-    fsys.write(fpath, code_block)
-
-
-def _write_typeset_pkg_init(dictionary: Dictionary, dest: pathlib.Path):
-    """Writes to `pyactus.typeset.__init__.py`.
-    
-    """
-    fpath = dest / "typeset" / "__init__.py"
-    code_block = gen_typeset_pkg_init(dictionary)
-    fsys.write(fpath, code_block)
+    fsys.write_code(_yield_code)

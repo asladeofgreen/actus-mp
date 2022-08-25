@@ -12,9 +12,9 @@ _TEMPLATES_DIR: pathlib.Path = pathlib.Path(os.path.dirname(__file__)).parent / 
 
 # Set codegen template sub-folders.
 _TEMPLATES_DIR: typing.List[pathlib.Path] = [
-    # _TEMPLATES_DIR / "py",
+    _TEMPLATES_DIR / "py",
     # _TEMPLATES_DIR / "rs",
-    _TEMPLATES_DIR / "ts"
+    # _TEMPLATES_DIR / "ts"
 ]
 
 # Set codegen template engine.

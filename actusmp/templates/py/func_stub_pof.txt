@@ -2,8 +2,9 @@
 # N.B. Auto-initialised using actus-mp
 # ************************************
 import datetime
-from pyactus.typeset import {{utils.to_camel_case(contract.type_info.identifier)}}Termset as ContractTermset
-from pyactus.typeset import StateSpace
+
+from pyactus.terms import {{utils.to_camel_case(defn.type_info.identifier)}}Termset as ContractTermset
+from pyactus.core import StateSpace
 
 
 def execute(
@@ -14,7 +15,7 @@ def execute(
     day_counter: object,
     time_adjuster: object
 ) -> StateSpace:
-    """Executes a {{contract.type_info.acronym}} contract {{event_type}} state transition function.
+    """Executes a {{defn.type_info.acronym}} contract {{event_type}} pay off function.
 
     :param time: The schedule time of this particular event.
     :param states: The current state of contract states.

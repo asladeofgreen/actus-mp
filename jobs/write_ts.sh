@@ -1,1 +1,0 @@
-python /home/sphere0/Work/nf/actus/actus-mp/jobs/write_ts.py
