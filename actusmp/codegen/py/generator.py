@@ -55,39 +55,3 @@ def gen_func_stubs_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Pat
 def gen_func_stubs_main(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
     for defn, code_block in gen_many("func_stub_main.txt", dictionary.contract_set, convertors):
         yield defn, code_block
-
-
-def gen_funcset_stubs_1(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    tmpl_set = {
-        FunctionType.POF: fsys.get_template("funcset/stub_pof.txt"),
-        FunctionType.STF: fsys.get_template("funcset/stub_stf.txt")
-    }
-
-    iterator = fsys.yield_funcset(dictionary, path_to_java_funcs)
-    for contract, func_type, event_type, suffix in iterator:
-        code_block = tmpl_set[func_type].render(utils=convertors, contract=contract, event_type=event_type, suffix=suffix)
-        yield contract, func_type, event_type, suffix, code_block
-
-
-def gen_funcset_stubs_2(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-    tmpl = fsys.get_template("funcset/stub_main.txt")
-
-    for contract in dictionary.contract_set:
-        code_block = tmpl.render(utils=convertors, contract=contract)
-        yield contract, code_block
-
-
-def gen_funcset_stubs_pkg_init(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-    tmpl = fsys.get_template("funcset/stub_pkg_init.txt")
-
-    for contract in dictionary.contract_set:
-        funcset_iterator = fsys.yield_funcset(dictionary, path_to_java_funcs, contract)
-        code_block = tmpl.render(utils=convertors, contract=contract, funcset_iterator=funcset_iterator)
-        if len(code_block) > 0:
-            yield contract, code_block
-
-# def gen_typeset_pkg_init(dictionary: Dictionary) -> str:
-#     tmpl = fsys.get_template("typeset/pkg_init.txt")
-
-#     return tmpl.render(utils=convertors, dictionary=dictionary)
-

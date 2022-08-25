@@ -11,10 +11,10 @@ from pyactus.typeset import contracts
 
 
 @dataclasses.dataclass
-class {{utils.to_camel_case(contract.type_info.identifier)}}Termset(contracts.ContractTermset):
-    """Set of applicable terms: {{contract.type_info.acronym}} -> {{contract.type_info.name}}.
+class {{utils.to_camel_case(defn.type_info.identifier)}}(contracts.ContractTermset)Termset:
+    """Set of applicable terms: {{defn.type_info.acronym}} -> {{defn.type_info.name}}.
 
-    {{contract.type_info.description}}
+    {{defn.type_info.description}}
 
     """
     # Contract Identifier.
@@ -23,11 +23,11 @@ class {{utils.to_camel_case(contract.type_info.identifier)}}Termset(contracts.Co
     # Contract Role.
     contract_role: enums.ContractRole = None
 
-    # Contract Type :: The ContractType is the most important information. It defines the cash flow generating pattern of a contract. The ContractType information in combination with a given state of the risk factors will produce a deterministic sequence of cash flows which are the basis of any financial analysis.
-    contract_type: enums.ContractType = enums.ContractType.{{contract.type_info.acronym}}
+    # Contract Type :: The ContractType is the most important information. It defines the cash flow generating pattern of a defn. The ContractType information in combination with a given state of the risk factors will produce a deterministic sequence of cash flows which are the basis of any financial analysis.
+    contract_type: enums.ContractType = enums.ContractType.{{defn.type_info.acronym}}
 
-{% if contract.term_set %}
-{% for term in contract.term_set %}
+{% if defn.term_set %}
+{% for term in defn.term_set %}
 {% if term.identifier not in ("contractID", "contractType", "contractRole",) %}
 {% if term.short_description %}
     # {{term.name}} :: {{term.short_description}}.

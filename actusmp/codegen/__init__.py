@@ -8,12 +8,28 @@ from actusmp.dictionary import get_dictionary
 
 
 class TargetLanguage(enum.Enum):
-    """Enumeration over set of supported language targets.
+    """Enumeration: set of supported language targets.
     
     """
     typescript = enum.auto()
     python = enum.auto()
     rust = enum.auto()
+
+
+class TargetGenerator(enum.Enum):
+    """Enumeration: set of supported generator types.
+    
+    """
+    Enum = enum.auto()
+    EnumIndex = enum.auto()
+    FuncIndex = enum.auto()
+    FuncStub = enum.auto()
+    FuncStubIndex = enum.auto()
+    FuncStubMain = enum.auto()
+    States = enum.auto()
+    Terms = enum.auto()
+    TermsIndex = enum.auto()
+
 
 
 # Map: target language type <-> code generator.
