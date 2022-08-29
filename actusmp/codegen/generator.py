@@ -1,112 +1,99 @@
-import typing
+import pathlib
 
+from actusmp.codegen import convertor
+from actusmp.codegen import enums
 from actusmp.codegen.enums import TargetGenerator
 from actusmp.codegen.enums import TargetLanguage
-from actusmp.codegen.py import convertors as convertor_py
-from actusmp.codegen.ts import convertor as convertor_ts
+from actusmp.codegen.enums import LANG_TEMPLATE_SUBFOLDER
+from actusmp.codegen.enums import GENERATOR_ACTUS_FN
 from actusmp.model import Dictionary
-from actusmp.utils.convertors import to_underscore_case
-from actusmp.utils.generators import gen_many
-from actusmp.utils.generators import gen_one
+from actusmp.model import FunctionType
+from actusmp.model import IterableEntity
+from actusmp.utils import fsys
 
 
-# Map: TargetLanguage <-> template subfolder name.
-_LANG_TEMPLATE_SUBFOLDER: typing.Map = {
-    TargetLanguage.python: "py",
-    TargetLanguage.rust: "rs",
-    TargetLanguage.typescript: "ts",
-}
+class GeneratorContext():
+    """Contextual information passed amongst the generator set.
+    
+    """
+    def __init__(self, lang: TargetLanguage, typeof: TargetGenerator, dictionary: Dictionary, path_to_java_funcs: pathlib.Path):
+        """Instance constructor.
+        
+        :param lang: Target programming language.
+        :param typeof: Tager generator type.
+        :param dictionary: Actus dictionary wrapper.
+        :param path_to_java_funcs: Path to core Java implementation.
 
-# Map: TargetLanguage <-> template subfolder name.
-_LANG_CONVERTOR = {
-    TargetLanguage.python: convertor_py,
-    TargetLanguage.rust: None,
-    TargetLanguage.typescript: convertor_ts,
-}
+        """
+        self.lang = lang
+        self.typeof = typeof
+        self.dictionary = dictionary
+        self.path_to_java_funcs = path_to_java_funcs
 
-def generate(lang: TargetLanguage, generator_type: TargetGenerator, dictionary: Dictionary):
-    convertor = _LANG_CONVERTOR[lang]
-    entity = _get_entity(lang, generator_type, dictionary)
-    template = _get_template(lang, generator_type)
+def generate(ctx: GeneratorContext):
+    """Returns code emitted by a generator.
 
-    if entity == dictionary:
-        yield entity, gen_one(template, entity, convertor)
+    :param ctx: Generator contextual information.    
+    :returns: A generated code block.
+
+    """
+    # Set template.
+    tmpl = _get_template(ctx)
+
+    # Set code block factory.
+    if ctx.typeof in (TargetGenerator.FuncStubPOF, TargetGenerator.FuncStubSTF):
+        factory = lambda: _gen_from_java_funcs(tmpl, ctx)
     else:
-        for entity, code_block in gen_many(template, entity, convertor):
-            yield entity, code_block
+        entity = _get_entity(ctx)
+        if entity == ctx.dictionary:
+            factory = lambda: _gen_from_dictionary(tmpl, entity)
+        else:
+            factory = lambda: _gen_from_iterable_entity(tmpl, entity)
 
+    # Yield 2 member tuple: (code block, domain entity).
+    for entity, code_block in factory():
+        yield code_block, entity
 
-def _get_entity(lang: TargetLanguage, generator_type: TargetGenerator, dictionary: Dictionary):
-    if generator_type == TargetGenerator.Enum:
-        return dictionary.enum_set
-    elif generator_type in (
+def _gen_from_dictionary(tmpl: pathlib.Path, dictionary: Dictionary):
+    """Yields a single generated code block."""
+    yield dictionary, tmpl.render(defn=dictionary, dictionary=dictionary, utils=convertor)
+
+def _gen_from_iterable_entity(tmpl: pathlib.Path, definitions: IterableEntity):
+    """Yields a set of generated code blocks."""
+    for defn in definitions:
+        yield defn, tmpl.render(defn=defn, utils=convertor)
+
+def _gen_from_java_funcs(tmpl: pathlib.Path, ctx: GeneratorContext):
+    """Returns generator yielding set of function stubs."""
+    f_type = GENERATOR_ACTUS_FN[ctx.typeof]
+    f_iterator = fsys.yield_funcset(ctx.dictionary, ctx.path_to_java_funcs, f_type)
+    for defn, event_type, suffix in f_iterator:
+        yield (defn, f_type, event_type, suffix), \
+              tmpl.render(defn=defn, event_type=event_type, suffix=suffix, utils=convertor)
+      
+def _get_entity(ctx: GeneratorContext):
+    """Returns entity against which generation will execute.
+    
+    """
+    if ctx.typeof == TargetGenerator.Enum:
+        return ctx.dictionary.enum_set
+    elif ctx.typeof in (
         TargetGenerator.FuncStubIndex,
         TargetGenerator.FuncStubMain,
+        TargetGenerator.FuncStubPOF,
+        TargetGenerator.FuncStubSTF,
         TargetGenerator.Termset,
         ):
-        return dictionary.contract_set
+        return ctx.dictionary.contract_set
     
-    return dictionary
-
-def _get_template(lang: TargetLanguage, generator_type: TargetGenerator):
-    dirname = _LANG_TEMPLATE_SUBFOLDER[lang]
-    filename = to_underscore_case(generator_type.name).lower()
-
-    return f"{dirname}/{filename}.txt" 
+    return ctx.dictionary
 
 
-# def _gen_enums(dictionary: Dictionary) -> typing.Tuple[Term, str]:
-#     for defn, code_block in gen_many("enum.txt", dictionary.enum_set, convertors):
-#         yield defn, code_block
+def _get_template(ctx: GeneratorContext):
+    """Returns template over which generation will execute.
+    
+    """
+    dirname = LANG_TEMPLATE_SUBFOLDER[ctx.lang]
+    filename = convertor.to_underscore_case(ctx.typeof.name).lower()
 
-# def _gen_enums_index(dictionary: Dictionary) -> str:
-#     return gen_one("enum_index.txt", dictionary, convertors)
-
-# def _gen_state_space(dictionary: Dictionary) -> str:
-#     return gen_one("state_space.txt", dictionary, convertors)
-
-# def _gen_terms(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-#     for defn, code_block in gen_many("termset.txt", dictionary.contract_set, convertors):
-#         yield defn, code_block
-
-# def _gen_terms_index(dictionary: Dictionary) -> str:
-#     return gen_one("termset_index.txt", dictionary, convertors)
-
-# def _gen_func_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-#     return gen_one("func_index.txt", dictionary, convertors)
-
-# def _gen_func_stub_index(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-#     for defn, code_block in gen_many("func_stub_index.txt", dictionary.contract_set, convertors):
-#         yield defn, code_block
-
-# def _gen_func_stub_main(dictionary: Dictionary) -> typing.Tuple[Contract, str]:
-#     for defn, code_block in gen_many("func_stub_main.txt", dictionary.contract_set, convertors):
-#         yield defn, code_block
-
-# def _gen_func_stub_pof(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-#     tmpl_set = {
-#         FunctionType.POF: fsys.get_template("func_stub_pof.txt"),
-#         FunctionType.STF: fsys.get_template("func_stub_stf.txt")
-#     }
-#     iterator = fsys.yield_funcset(dictionary, path_to_java_funcs)
-#     for defn, func_type, event_type, suffix in iterator:
-#         yield defn, func_type, event_type, suffix, tmpl_set[func_type].render(
-#             defn=defn,
-#             event_type=event_type,
-#             suffix=suffix,
-#             utils=convertors,
-#             )
-
-# def _gen_func_stub_stf(dictionary: Dictionary, path_to_java_funcs: pathlib.Path) -> typing.Tuple[Contract, str]:
-#     tmpl_set = {
-#         FunctionType.POF: fsys.get_template("func_stub_pof.txt"),
-#         FunctionType.STF: fsys.get_template("func_stub_stf.txt")
-#     }
-#     iterator = fsys.yield_funcset(dictionary, path_to_java_funcs)
-#     for defn, func_type, event_type, suffix in iterator:
-#         yield defn, func_type, event_type, suffix, tmpl_set[func_type].render(
-#             defn=defn,
-#             event_type=event_type,
-#             suffix=suffix,
-#             utils=convertors,
-#             )
+    return fsys.get_template(f"{dirname}_{filename}.txt")

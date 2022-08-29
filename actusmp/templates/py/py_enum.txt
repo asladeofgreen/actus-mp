@@ -1,0 +1,17 @@
+# **********************************
+# N.B. Auto-generated using actus-mp
+# **********************************
+import enum
+
+
+class {{utils.to_camel_case(defn.identifier)}}(enum.Enum):
+    """{{defn.acronym}} :: {{defn.name}}.
+
+    {{defn.description}}
+
+    """
+{% for member in defn.members %}
+    # {{member.name}} :: {{member.description.strip()}}
+    {{utils.to_py_enum_member(defn, member)}} = {{member.option}}
+
+{% endfor %}

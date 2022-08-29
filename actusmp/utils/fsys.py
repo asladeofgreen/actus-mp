@@ -10,13 +10,6 @@ from actusmp import model
 # Set templates home folder.
 _TEMPLATES_DIR: pathlib.Path = pathlib.Path(os.path.dirname(__file__)).parent / "templates"
 
-# Set codegen template sub-folders.
-_TEMPLATES_DIR: typing.List[pathlib.Path] = [
-    _TEMPLATES_DIR / "py",
-    # _TEMPLATES_DIR / "rs",
-    # _TEMPLATES_DIR / "ts"
-]
-
 # Set codegen template engine.
 _CODEGEN_ENV: jinja2.Environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(_TEMPLATES_DIR),
@@ -41,19 +34,10 @@ def write(fpath: pathlib.Path, content: str):
     with open(fpath, "w") as fstream:
         fstream.write(content)
 
-def write_code(code_generator: typing.Generator[typing.Tuple[str, pathlib.Path], None, None]):
-    """Writes code blocks yielded by generator.
-
-    :param code_generator: Code block generator.
-    
-    """
-    for code_block, fpath in code_generator():
-        write(fpath, code_block)
-
 def yield_funcset(
     dictionary: model.Dictionary,
     path_to_java_funcs: pathlib.Path,
-    filter: model.Contract = None
+    f_type: model.FunctionType
 ) -> typing.Tuple[model.Contract, model.FunctionType, str]:
     """Yields set of functions for which code can be emitted.
 
@@ -61,13 +45,17 @@ def yield_funcset(
     Within each sub-package is the set of contract specific functions.  Each such
     function is named: {func-type}_{event-type}_{contract-type}.java.
 
+    :param dictionary: ACTUS dictionary wrapper.
+    :param path_to_java_funcs: Path to functions defined in actus-core.
+    :param f_type: Type of ACTUS function to be processed.
+    :returns: Iterator over set of functions declared in actus-core.
+
     """
     for contract in dictionary.contract_set:
-        if filter and filter != contract:
-            continue
         path_to_java_funcs_contract = path_to_java_funcs / contract.type_info.acronym.lower()
         if path_to_java_funcs_contract.exists() and path_to_java_funcs_contract.is_dir():
             iterator = (i.stem.split("_") for i in path_to_java_funcs_contract.iterdir())
             for (func_type, event_type, suffix) in iterator:
-                suffix = suffix[-1] if suffix[-1].isnumeric() else ""
-                yield contract, model.FunctionType[func_type], event_type, suffix
+                if f_type.name == func_type:
+                    suffix = suffix[-1] if suffix[-1].isnumeric() else ""
+                    yield contract, event_type, suffix

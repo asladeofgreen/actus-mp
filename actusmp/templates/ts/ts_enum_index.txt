@@ -1,0 +1,7 @@
+/**
+ *  N.B. Auto-generated using actus-mp
+ */
+{% for defn in dictionary.enum_set %}
+export { {{utils.to_camel_case(defn.identifier)}} } from './{{utils.to_pascal_case(defn.identifier)}}';
+{% endfor %}
+

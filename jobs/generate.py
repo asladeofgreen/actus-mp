@@ -36,8 +36,7 @@ def _main(args: argparse.Namespace):
     :param args: Parsed command line arguments.
 
     """
-    actusmp.write_typeset(args.lang, args.dest)
-    actusmp.write_funcset(args.lang, args.dest, args.path_to_core)
+    actusmp.write(args.lang, args.dest, args.path_to_core)
 
 
 # Entry point.

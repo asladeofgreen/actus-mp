@@ -1,0 +1,26 @@
+/**
+ *  N.B. Auto-generated using actus-mp
+ */
+
+import * as enums from '../enums';
+
+/**
+ *
+ *  A data structure representing various states of a contract.  The states of a 
+ *  contract contain important information used when evaluating payoff. Furthermore, 
+ *  states themselves contain atomic analytical elements such as the nominal value 
+ *  or accrued interest for a lending instrument. On the other hand, states are 
+ *  updated throughout an instrument's lifetime through evaluation of state 
+ *  transition function in the various contract events.
+ *
+ */
+export class StateSpace {
+{% for defn in dictionary.state_set %}
+    // {{defn.acronym}} :: {{defn.name}} :: {{defn.short_description}}.
+    {{utils.to_pascal_case(defn.identifier)}}: {{utils.to_ts_type(defn)}};
+{% if defn != dictionary.state_set._states[-1] %}
+
+{% endif %}
+{% endfor %}
+}
+
