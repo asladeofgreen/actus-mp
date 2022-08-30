@@ -82,6 +82,13 @@ def _get_path_to_code_dest_1(dest: pathlib.Path, ctx: generator.GeneratorContext
         elif ctx.typeof == TargetGenerator.TermsetIndex:
             return dest / "terms" / "index.ts"
 
+    elif ctx.lang == TargetLanguage.rust:
+        if ctx.typeof == TargetGenerator.Enum:
+            pass
+            # return dest / "enums" / f"{convertor.to_pascal_case(entity.identifier)}.rs"
+        elif ctx.typeof == TargetGenerator.EnumIndex:
+            return dest / "enums" / "mod.rs"
+
 def _get_path_to_code_dest_2(dest: pathlib.Path, ctx: generator.GeneratorContext, entity):
     """Returns file system location to which code block will be written.
     
