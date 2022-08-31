@@ -70,7 +70,7 @@ def _gen_from_java_funcs(tmpl: pathlib.Path, ctx: GeneratorContext):
     for defn, event_type, suffix in f_iterator:
         yield (defn, f_type, event_type, suffix), \
               tmpl.render(defn=defn, event_type=event_type, suffix=suffix, utils=convertor)
-      
+
 def _get_entity(ctx: GeneratorContext):
     """Returns entity against which generation will execute.
     

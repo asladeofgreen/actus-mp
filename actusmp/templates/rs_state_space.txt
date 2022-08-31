@@ -2,7 +2,8 @@
 // N.B. Auto-generated using actus-mp
 //
 
-use crate::enums;
+use crate::types::enums;
+use crate::types::core;
 
 /// 
 /// A data structure representing various states of a contract.  The states of a 

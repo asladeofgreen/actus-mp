@@ -3,29 +3,32 @@
 //
 
 {% if defn.term_set %}
-use crate::core;
-use crate::enums;
+use crate::types::core;
+use crate::types::enums;
 {% endif %}
 
+///
 /// {{defn.type_info.acronym}} :: {{defn.type_info.name}}.
 ///
 /// {{defn.type_info.description}}
 ///
+{% if not defn.term_set %}
+/// WARNING:: This contract type has not yet been formally defined.  This struct is thus simply a placeholder.
+///
+pub struct {{utils.to_camel_case(defn.type_info.identifier)}}Termset { }
+{% else %}
 pub struct {{utils.to_camel_case(defn.type_info.identifier)}}Termset {
-{% if defn.term_set %}
 {% for term in defn.term_set %}
 {% if term.short_description %}
-    // {{term.acronym}} :: {{term.name}} :: {{term.short_description}}.
+    /// {{term.acronym}} :: {{term.name}} :: {{term.short_description}}.
 {% else %}
-    // {{term.acronym}} :: {{term.name}}.
+    /// {{term.acronym}} :: {{term.name}}.
 {% endif %}
     pub {{utils.to_underscore_case(term.identifier)}}: {{utils.to_rs_type(term)}},
 {% if term != defn.term_set._terms[-1] %}
 
 {% endif %}
 {% endfor %}
-{% else %}
-    // WARNING:: This contract type has not yet been formally defined.  This struct is thus simply a placeholder.
-{% endif %}
 }
+{% endif %}
 

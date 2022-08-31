@@ -1,29 +1,25 @@
-# ************************************
-# N.B. Auto-initialised using actus-mp
-# ************************************
-import datetime
-from pyactus.terms import {{utils.to_camel_case(defn.type_info.identifier)}}Termset as ContractTermset
-from pyactus.core import StateSpace
+//
+// N.B. Auto-generated using actus-mp
+//
+use crate::types::core::StateSpace;
+use crate::types::terms::{{utils.to_camel_case(defn.type_info.identifier)}}Termset as ContractTermset;
 
-
-def execute(
-    time: datetime.datetime,
-    states: object,
-    term_set: ContractTermset,
-    risk_factor_model: object,
-    day_counter: object,
-    time_adjuster: object
-) -> StateSpace:
-    """Executes a {{defn.type_info.acronym}} contract {{event_type}} state transition function.
-
-    :param time: The schedule time of this particular event.
-    :param states: The current state of contract states.
-    :param term_set: The set of contract terms.
-    :param risk_factor_model: An external market model.
-    :param day_counter: The day count convention used to calculate day count fractions.
-    :param time_adjuster: The business day convention used to shift the schedule time.
-    :returns: An array of post-event states of numerical contract states.
-
-    """
-    raise NotImplementedError()
-
+/// 
+/// Executes a {{defn.type_info.acronym}} contract {{event_type}} state transition function.
+/// 
+/// # Arguments
+/// 
+/// `time` - The schedule time of this particular event.
+/// `states` - The current state of contract states.
+/// `term_set` - The set of contract terms.
+/// `risk_factor_model` - An external market model.
+/// `day_counter` - The day count convention used to calculate day count fractions.
+/// `time_adjuster` - The business day convention used to shift the schedule time.
+/// 
+/// # Returns
+/// 
+/// An array of post-event states of numerical contract states.
+/// 
+pub fn execute() {
+    unimplemented!();
+}
