@@ -1,31 +1,24 @@
-# **********************************
-# N.B. Auto-generated using actus-mp
-# **********************************
-import dataclasses
-import datetime
+//
+// N.B. Auto-generated using actus-mp
+//
 
-from pyactus.typeset import enums
+use crate::enums;
 
-
-@dataclasses.dataclass
-class StateSpace():
-    """
-    A data structure representing various states of a contract.  The states of a 
-    contract contain important information used when evaluating payoff. Furthermore, 
-    states themselves contain atomic analytical elements such as the nominal value 
-    or accrued interest for a lending instrument. On the other hand, states are 
-    updated throughout an instrument's lifetime through evaluation of state 
-    transition function in the various contract events.
-
-    """
+/// 
+/// A data structure representing various states of a contract.  The states of a 
+/// contract contain important information used when evaluating payoff. Furthermore, 
+/// states themselves contain atomic analytical elements such as the nominal value 
+/// or accrued interest for a lending instrument. On the other hand, states are 
+/// updated throughout an instrument's lifetime through evaluation of state 
+/// transition function in the various contract events.
+/// 
+pub struct StateSpace {
 {% for state in dictionary.state_set %}
-    # {{state.acronym}} :: {{state.name}} :: {{state.short_description}}.
-    {{utils.to_underscore_case(state.identifier)}}: {{utils.to_py_type(state)}}
+    // {{state.acronym}} :: {{state.name}} :: {{state.short_description}}.
+    pub {{utils.to_underscore_case(state.identifier)}}: {{utils.to_rs_type(state)}},
+{% if state != dictionary.state_set._states[-1] %}
 
+{% endif %}
 {% endfor %}
+}
 
-    def __str__(self):
-        """Instance string representation.
-
-        """
-        return " | ".join(i for i in self.__dict__.values())

@@ -125,7 +125,7 @@ def to_rs_type(term: Term) -> str:
         elif typedef == ScalarType.Real:
             return "f64"
         elif typedef == ScalarType.Timestamp:
-            return "f64"
+            return "core::Timestamp"
             return "datetime.datetime"
         elif typedef == ScalarType.Varchar:
             return "String"
