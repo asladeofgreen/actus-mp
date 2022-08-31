@@ -8,11 +8,7 @@ from actusmp.dictionary import get_dictionary
 from actusmp.utils import fsys
 
 
-def write(
-    lang: TargetLanguage, 
-    dest: pathlib.Path,
-    path_to_java_impl: pathlib.Path
-):
+def write(lang: TargetLanguage, dest: pathlib.Path, path_to_java_impl: pathlib.Path):
     """Writes to file system a set of code blocks to initialise an upstream library.
 
     :param lang: Target progamming language.
@@ -84,10 +80,21 @@ def _get_path_to_code_dest_1(dest: pathlib.Path, ctx: generator.GeneratorContext
 
     elif ctx.lang == TargetLanguage.rust:
         if ctx.typeof == TargetGenerator.Enum:
-            pass
-            # return dest / "enums" / f"{convertor.to_pascal_case(entity.identifier)}.rs"
+            return dest / "enums" / f"{convertor.to_underscore_case(entity.identifier)}.rs"
         elif ctx.typeof == TargetGenerator.EnumIndex:
             return dest / "enums" / "mod.rs"
+        elif ctx.typeof == TargetGenerator.FuncIndex:
+            return dest / "funcs" / "mod.rs"
+        elif ctx.typeof == TargetGenerator.FuncStubIndex:
+            return dest / "funcs" / f"{entity.type_info.acronym.lower()}" / "mod.rs" 
+        elif ctx.typeof == TargetGenerator.FuncStubMain:
+            return dest / "funcs" / f"{entity.type_info.acronym.lower()}" / "main.rs" 
+        elif ctx.typeof == TargetGenerator.StateSpace:
+            return dest / "core" / "states.rs"
+        elif ctx.typeof == TargetGenerator.Termset:
+            return dest / "terms" / f"{convertor.to_underscore_case(entity.type_info.acronym.lower())}.rs"
+        elif ctx.typeof == TargetGenerator.TermsetIndex:
+            return dest / "terms" / "mod.rs"            
 
 def _get_path_to_code_dest_2(dest: pathlib.Path, ctx: generator.GeneratorContext, entity):
     """Returns file system location to which code block will be written.
@@ -103,3 +110,5 @@ def _get_path_to_code_dest_2(dest: pathlib.Path, ctx: generator.GeneratorContext
         return outdir / f"{fname}.py"
     elif ctx.lang == TargetLanguage.typescript:
         return outdir / f"{fname}.ts"
+    elif ctx.lang == TargetLanguage.typescript:
+        return outdir / f"{fname}.rs"

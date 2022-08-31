@@ -48,7 +48,7 @@ def _parse_contract_types(obj: dict):
     # Extend contract type enum but set option to a negative number.
     for idx, item in enumerate(sorted(unsupported, key=lambda i: i["acronym"])):
         obj["terms"]["contractType"]["allowedValues"].append({
-            "option": -idx,
+            "option": -idx - 1,
             "identifier": item["identifier"],
             "name": item["name"],
             "acronym": item["acronym"].upper(),

@@ -1,0 +1,11 @@
+//
+// N.B. Auto-generated using actus-mp
+//
+{% for defn in dictionary.enum_set %}
+mod {{utils.to_underscore_case(defn.identifier)}};
+{% endfor %}
+
+{% for defn in dictionary.enum_set %}
+pub use {{utils.to_underscore_case(defn.identifier)}}::{{utils.to_camel_case(defn.identifier)}};
+{% endfor %}
+

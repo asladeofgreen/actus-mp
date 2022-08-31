@@ -3,15 +3,13 @@
 # **********************************
 import dataclasses
 import datetime
-import typing
 
-from pyactus.typeset import enums
-from pyactus.typeset import auxiliary
-from pyactus.typeset import contracts
+from pyactus import core
+from pyactus import enums
 
 
 @dataclasses.dataclass
-class {{utils.to_camel_case(defn.type_info.identifier)}}(contracts.ContractTermset)Termset:
+class {{utils.to_camel_case(defn.type_info.identifier)}}Termset(core.ContractTermset):
     """Set of applicable terms: {{defn.type_info.acronym}} -> {{defn.type_info.name}}.
 
     {{defn.type_info.description}}

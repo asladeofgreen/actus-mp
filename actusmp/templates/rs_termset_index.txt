@@ -1,0 +1,17 @@
+//
+// N.B. Auto-generated using actus-mp
+//
+{% for contract in dictionary.contract_set %}
+mod {{utils.to_underscore_case(contract.type_info.acronym)}};
+{% endfor %}
+
+{% for contract in dictionary.contract_set %}
+pub use {{utils.to_underscore_case(contract.type_info.acronym)}}::{{utils.to_camel_case(contract.type_info.identifier)}}Termset;
+{% endfor %}
+
+pub enum ContractTermset {
+{% for contract in dictionary.contract_set %}
+   {{contract.type_info.acronym}}({{utils.to_camel_case(contract.type_info.identifier)}}Termset),
+{% endfor %}
+}
+
