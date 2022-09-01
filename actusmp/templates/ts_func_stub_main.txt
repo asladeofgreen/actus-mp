@@ -2,8 +2,8 @@
  *  N.B. Auto-generated using actus-mp
  */
 
-import { Event } from '../../core';
-import { {{utils.to_camel_case(defn.type_info.identifier)}}Termset as Termset } from '../../terms';
+import { Event } from '../../types/core';
+import { {{utils.to_camel_case(defn.type_info.identifier)}}Termset as Termset } from '../../types/terms';
 
 /**
  *  Applies a set of contract events to the current financial contract state.

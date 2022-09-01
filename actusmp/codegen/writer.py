@@ -78,21 +78,21 @@ def _get_path_to_code_dest_1(dest: pathlib.Path, ctx: generator.GeneratorContext
 
     elif ctx.lang == TargetLanguage.typescript:
         if ctx.typeof == TargetGenerator.Enum:
-            return dest / "enums" / f"{convertor.to_pascal_case(entity.identifier)}.ts"
+            return dest / "types" / "enums" / f"{convertor.to_pascal_case(entity.identifier)}.ts"
         elif ctx.typeof == TargetGenerator.EnumIndex:
-            return dest / "enums" / "index.ts"
+            return dest / "types" / "enums" / "index.ts"
         elif ctx.typeof == TargetGenerator.FuncIndex:
-            return dest / "funcs" / "index.ts"
+            return dest / "algos" / "index.ts"
         elif ctx.typeof == TargetGenerator.FuncStubIndex:
-            return dest / "funcs" / f"{entity.type_info.acronym.lower()}" / "index.ts" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "index.ts" 
         elif ctx.typeof == TargetGenerator.FuncStubMain:
-            return dest / "funcs" / f"{entity.type_info.acronym.lower()}" / "main.ts" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "main.ts" 
         elif ctx.typeof == TargetGenerator.StateSpace:
-            return dest / "core" / "states.ts"
+            return dest / "types" / "core" / "states.ts"
         elif ctx.typeof == TargetGenerator.Termset:
-            return dest / "terms" / f"{convertor.to_pascal_case(entity.type_info.acronym.lower())}.ts"
+            return dest / "types" / "terms" / f"{convertor.to_pascal_case(entity.type_info.acronym.lower())}.ts"
         elif ctx.typeof == TargetGenerator.TermsetIndex:
-            return dest / "terms" / "index.ts"
+            return dest / "types" / "terms" / "index.ts"
 
 def _get_path_to_code_dest_2(dest: pathlib.Path, ctx: generator.GeneratorContext, entity):
     """Returns file system location to which code block will be written.
@@ -108,12 +108,11 @@ def _get_path_to_code_dest_2(dest: pathlib.Path, ctx: generator.GeneratorContext
     elif ctx.lang == TargetLanguage.rust:
         outdir = dest / "algos" / f"{defn.type_info.acronym.lower()}"
     elif ctx.lang == TargetLanguage.typescript:
-        outdir = dest / "funcs" / f"{defn.type_info.acronym.lower()}"
+        outdir = dest / "algos" / f"{defn.type_info.acronym.lower()}"
 
     if ctx.lang == TargetLanguage.python:
         return outdir / f"{fname}.py"
     elif ctx.lang == TargetLanguage.rust:
         return outdir / f"{fname}.rs"
     elif ctx.lang == TargetLanguage.typescript:
-        print(123)
         return outdir / f"{fname}.ts"

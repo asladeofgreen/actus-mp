@@ -2,8 +2,8 @@
  *  N.B. Auto-generated using actus-mp
  */
 
-import { Event, Termset } from '../core';
-import { ContractType } from '../enums';
+import { Event, Termset } from '../types/core';
+import { ContractType } from '../types/enums';
 {% for defn in dictionary.contract_set %}
 import * as {{defn.type_info.acronym.lower()}} from './{{defn.type_info.acronym.lower()}}';
 {% endfor %}

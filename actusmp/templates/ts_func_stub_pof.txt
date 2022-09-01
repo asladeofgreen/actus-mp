@@ -2,8 +2,8 @@
  *  N.B. Auto-generated using actus-mp
  */
 
-import { StateSpace } from '../../core';
-import { {{utils.to_camel_case(defn.type_info.identifier)}}Termset as Termset } from '../../terms';
+import { StateSpace } from '../../types/core';
+import { {{utils.to_camel_case(defn.type_info.identifier)}}Termset as Termset } from '../../types/terms';
 
 /*
  *  Executes a {{defn.type_info.acronym}} contract {{event_type}} pay off function.
