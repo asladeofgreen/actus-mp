@@ -4,17 +4,3 @@
 {% for contract in dictionary.contract_set %}
 mod {{contract.type_info.acronym.lower()}};
 {% endfor %}
-
-// use crate::types::core::ContractTermset;
-// use crate::types::core::events::Event;
-// use crate::types::enums::ContractType;
-
-
-// # Map: contract type <-> function handle.
-// _HANDLES = {
-// {% for contract in dictionary.contract_set %}
-//     ContractType.{{contract.type_info.acronym}}: {{contract.type_info.acronym.lower()}},
-// {% endfor %}
-// }
-
-
