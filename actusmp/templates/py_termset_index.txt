@@ -1,12 +1,21 @@
 # **********************************
 # N.B. Auto-generated using actus-mp
 # **********************************
+import dataclasses
+
 from pyactus.types.enums import ContractType
 {% for contract in dictionary.contract_set %}
 from pyactus.types.terms.{{utils.to_underscore_case(contract.type_info.acronym)}} import {{utils.to_camel_case(contract.type_info.identifier)}}Termset
 {% endfor %}
 
-# Map: Contract Type <-> ContractTermset.
+# Map: contract type <-> contract field set.
+CONTRACT_FIELDSETS = {
+{% for contract in dictionary.contract_set %}
+    {{utils.to_camel_case(contract.type_info.identifier)}}Termset: {i.name: i for i in dataclasses.fields({{utils.to_camel_case(contract.type_info.identifier)}}Termset)},
+{% endfor %}
+}
+
+# Map: contract type <-> contract term set.
 CONTRACT_TERMSETS = {
 {% for contract in dictionary.contract_set %}
     ContractType.{{contract.type_info.acronym}}: {{utils.to_camel_case(contract.type_info.identifier)}}Termset,
