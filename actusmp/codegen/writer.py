@@ -42,21 +42,21 @@ def _get_path_to_code_dest_1(dest: pathlib.Path, ctx: generator.GeneratorContext
     """
     if ctx.lang == TargetLanguage.python:
         if ctx.typeof == TargetGenerator.Enum:
-            return dest / "enums" / f"{convertor.to_underscore_case(entity.identifier)}.py"
+            return dest / "types" / "enums" / f"{convertor.to_underscore_case(entity.identifier)}.py"
         elif ctx.typeof == TargetGenerator.EnumIndex:
-            return dest / "enums" / "__init__.py"
+            return dest / "types" / "enums" / "__init__.py"
         elif ctx.typeof == TargetGenerator.FuncIndex:
-            return dest / "funcs" / "__init__.py"
+            return dest / "algos" / "__init__.py"
         elif ctx.typeof == TargetGenerator.FuncStubIndex:
-            return dest / "funcs" / f"{entity.type_info.acronym.lower()}" / "__init__.py" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "__init__.py" 
         elif ctx.typeof == TargetGenerator.FuncStubMain:
-            return dest / "funcs" / f"{entity.type_info.acronym.lower()}" / "main.py" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "main.py" 
         elif ctx.typeof == TargetGenerator.StateSpace:
-            return dest / "core" / "states.py"
+            return dest / "types" / "core" / "states.py"
         elif ctx.typeof == TargetGenerator.Termset:
-            return dest / "terms" / f"{convertor.to_underscore_case(entity.type_info.acronym.lower())}.py"
+            return dest / "types" / "terms" / f"{convertor.to_underscore_case(entity.type_info.acronym.lower())}.py"
         elif ctx.typeof == TargetGenerator.TermsetIndex:
-            return dest / "terms" / "__init__.py"            
+            return dest / "types" / "terms" / "__init__.py"            
 
     elif ctx.lang == TargetLanguage.rust:
         if ctx.typeof == TargetGenerator.Enum:
@@ -104,7 +104,7 @@ def _get_path_to_code_dest_2(dest: pathlib.Path, ctx: generator.GeneratorContext
     fname = f"{fname}_{suffix}" if suffix else f"{fname}"
 
     if ctx.lang == TargetLanguage.python:
-        outdir = dest / "funcs" / f"{defn.type_info.acronym.lower()}"
+        outdir = dest / "algos" / f"{defn.type_info.acronym.lower()}"
     elif ctx.lang == TargetLanguage.rust:
         outdir = dest / "algos" / f"{defn.type_info.acronym.lower()}"
     elif ctx.lang == TargetLanguage.typescript:

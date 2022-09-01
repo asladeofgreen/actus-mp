@@ -3,9 +3,10 @@
 # **********************************
 import dataclasses
 import datetime
+import typing
 
-from pyactus import core
-from pyactus import enums
+from pyactus.types import core
+from pyactus.types import enums
 
 
 @dataclasses.dataclass
