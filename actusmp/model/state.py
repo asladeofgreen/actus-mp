@@ -8,7 +8,7 @@ from actusmp.model.scalar_type import ScalarType
 @dataclasses.dataclass
 class State(Entity):
     """A state field assigned during calculation execution.
-    
+
     """
     # Constraint over set of allowed values, e.g. 'ISO8601 Datetime'.
     allowed_values: typing.List[typing.Union[dict, str]]
@@ -31,16 +31,16 @@ class State(Entity):
 
 @dataclasses.dataclass
 class StateSet():
-    """A collection of contract state fields that are assigned 
+    """A collection of contract state fields that are assigned
        during calculation execution.
-    
+
     """
     # Collection of associated contract states.
     _states: typing.List[State]
 
     def __iter__(self) -> typing.Iterator[State]:
         """Instance iterator."""
-        return iter(sorted(self._states, key=lambda i: i.identifier))    
+        return iter(sorted(self._states, key=lambda i: i.identifier))
 
     def __len__(self) -> int:
         """Instance iterator length."""

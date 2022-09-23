@@ -1,6 +1,5 @@
 import dataclasses
 import datetime
-from faulthandler import is_enabled
 import typing
 
 from actusmp.model.applicability import ApplicableTermInfoSet
@@ -14,11 +13,11 @@ from actusmp.model.term import TermSet
 @dataclasses.dataclass
 class Dictionary():
     """An information set by which the ACTUS standard is declared.
-    
+
     """
-    # Criteria that determine which set of terms are associated with which type of contract. 
+    # Criteria that determine which set of terms are associated with which type of contract.
     applicability: ApplicableTermInfoSet
-    
+
     # Enumeration over set of contract event types.
     contract_event_type: Enum
 
@@ -64,7 +63,7 @@ class Dictionary():
         """Set of enumerations defined within dictionary."""
         targets = \
             [i for i in self.term_set if i.is_enum] + \
-                [
+            [
                 self.contract_event_type,
                 self.contract_reference_role,
                 self.contract_reference_type,

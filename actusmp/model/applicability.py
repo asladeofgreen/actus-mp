@@ -7,7 +7,7 @@ from actusmp.model.taxonomy import ContractTypeInfo
 @dataclasses.dataclass
 class ApplicableTermInfo():
     """Information related to an term applicable to a contract.
-    
+
     """
     # Identifier of associated contract type.
     contract_type_id: str
@@ -20,7 +20,7 @@ class ApplicableTermInfo():
 
     def __str__(self) -> str:
         """Instance string representation."""
-        return f"applicable-term-info|{self.contract_type_id}|{self.term_id}|{self.term_instruction}"
+        return f"applicable-term-info|{self.contract_type_id}|{self.term_id}"
 
     @property
     def sort_key(self) -> str:
@@ -34,11 +34,11 @@ class ApplicableTermInfoSet():
 
     """
     # Collection of associated applicable contract terms.
-    _items: typing.List[ApplicableTermInfo] 
+    _items: typing.List[ApplicableTermInfo]
 
     def __iter__(self) -> typing.Iterator[ApplicableTermInfo]:
         """Instance iterator."""
-        return iter(sorted(self._items, key=lambda i: i.sort_key))    
+        return iter(sorted(self._items, key=lambda i: i.sort_key))
 
     def __len__(self) -> int:
         """Instance iterator length."""

@@ -5,12 +5,12 @@ import typing
 @dataclasses.dataclass
 class Entity():
     """A uniquely identifable entity within the type system.
-    
+
     """
     # A short identifier, e.g. 'SCF'.
     acronym: str
 
-    # A long text description, e.g. 'Shift event dates first then ...'. 
+    # A long text description, e.g. 'Shift event dates first then ...'.
     description: str
 
     # A canonical identifier within enumeration scope.
@@ -35,14 +35,14 @@ class Entity():
 @dataclasses.dataclass
 class IterableEntity():
     """An entity managing an inner collection.
-    
+
     """
     # Collection of associated contract terms.
     _terms: typing.List[Entity]
 
     def __iter__(self) -> typing.Iterator[Entity]:
         """Instance iterator."""
-        return iter(sorted(self._terms, key=lambda i: i.identifier))    
+        return iter(sorted(self._terms, key=lambda i: i.identifier))
 
     def __len__(self) -> int:
         """Instance iterator length."""

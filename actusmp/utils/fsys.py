@@ -20,6 +20,7 @@ _CODEGEN_ENV: jinja2.Environment = jinja2.Environment(
 # Set template loading function.
 get_template: typing.Callable = _CODEGEN_ENV.get_template
 
+
 def write(fpath: pathlib.Path, content: str):
     """Simple sink function to write file contents to file system.
 
@@ -27,12 +28,13 @@ def write(fpath: pathlib.Path, content: str):
 
     :param fpath: Target file path.
     :param content: File content to be written.
-    
+
     """
     if not fpath.parent.exists():
         fpath.parent.mkdir(parents=True)
     with open(fpath, "w") as fstream:
         fstream.write(content)
+
 
 def yield_funcset(
     dictionary: model.Dictionary,

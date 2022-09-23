@@ -6,7 +6,7 @@ from actusmp.model import ScalarType
 from actusmp.model import Term
 
 
-def to_camel_case(name: str, separator: str ='_'):
+def to_camel_case(name: str, separator: str = '_'):
     """Converts passed name to camel case.
 
     :param name: A name as specified in ontology specification.
@@ -24,7 +24,8 @@ def to_camel_case(name: str, separator: str ='_'):
                     r += s[1:]
     return r
 
-def to_pascal_case(name: str, separator: str ='_'):
+
+def to_pascal_case(name: str, separator: str = '_'):
     """Converts passed name to pascal case.
 
     :param name: A name as specified in ontology specification.
@@ -40,9 +41,10 @@ def to_pascal_case(name: str, separator: str ='_'):
             r += s[1:]
     return r
 
+
 def to_py_type(term: Term) -> str:
     """Maps an Actus term's type to it's pythonic equivalent.
-    
+
     """
     def _map(typedef: ScalarType):
         if typedef == ScalarType.ContractReference:
@@ -60,16 +62,17 @@ def to_py_type(term: Term) -> str:
         elif typedef == ScalarType.Varchar:
             return "str"
         else:
-            raise ValueError(f"Unsupported term scalar type: {term.scalar_type} :: {typedef}")        
+            raise ValueError(f"Unsupported term scalar type: {term.scalar_type} :: {typedef}")
 
     if term.is_array:
         return f"typing.List[{_map(term.scalar_type)}]"
     else:
         return _map(term.scalar_type)
 
+
 def to_py_default(term: Term) -> str:
     """Maps an Actus term's default value to it's pythonic equivalent.
-    
+
     """
     def get_enum_default_acronym():
         for member in term.allowed_values:
@@ -86,20 +89,21 @@ def to_py_default(term: Term) -> str:
         elif term.scalar_type == ScalarType.Real:
             try:
                 return float(term.default)
-            except:
+            except ValueError:
                 return float(0)
 
         return f"'TODO: format {term.scalar_type} :: {term.default}'"
 
+
 def to_py_enum_member(definition: Enum, member: EnumMember) -> str:
     """Maps an enum member to a python safe enum member name.
-    
+
     """
     # Some enum members begin with an integer which is unsafe in python.
     member_name = member.acronym
     try:
         member_name = member_name.upper()
-    except:
+    except BaseException:
         raise
 
     try:
@@ -109,9 +113,10 @@ def to_py_enum_member(definition: Enum, member: EnumMember) -> str:
     else:
         return f"_{member_name}"
 
+
 def to_rs_type(term: Term) -> str:
     """Maps an Actus term's type to it's rusty equivalent.
-    
+
     """
     def _map(typedef: ScalarType):
         if typedef == ScalarType.ContractReference:
@@ -130,16 +135,17 @@ def to_rs_type(term: Term) -> str:
         elif typedef == ScalarType.Varchar:
             return "String"
         else:
-            raise ValueError(f"Unsupported term scalar type: {term.scalar_type} :: {typedef}")        
+            raise ValueError(f"Unsupported term scalar type: {term.scalar_type} :: {typedef}")
 
     if term.is_array:
         return f"Vec<{_map(term.scalar_type)}>"
     else:
         return _map(term.scalar_type)
 
+
 def to_rs_default(term: Term) -> str:
     """Maps an Actus term's default value to it's rusty equivalent.
-    
+
     """
     def get_enum_default_acronym():
         for member in term.allowed_values:
@@ -156,20 +162,21 @@ def to_rs_default(term: Term) -> str:
         elif term.scalar_type == ScalarType.Real:
             try:
                 return float(term.default)
-            except:
+            except ValueError:
                 return float(0)
 
         return f"'TODO: format {term.scalar_type} :: {term.default}'"
 
+
 def to_rs_enum_member(definition: Enum, member: EnumMember) -> str:
     """Maps an enum member to a rusty safe enum member name.
-    
+
     """
     # Some enum members begin with an integer which is unsafe in python.
     member_name = member.acronym
     try:
         member_name = member_name.upper()
-    except:
+    except BaseException:
         raise
 
     try:
@@ -179,9 +186,10 @@ def to_rs_enum_member(definition: Enum, member: EnumMember) -> str:
     else:
         return f"_{member_name}"
 
+
 def to_ts_type(term: Term) -> str:
     """Maps an Actus term's type to it's typescript equivalent.
-    
+
     """
     def _map(typedef: ScalarType):
         if typedef == ScalarType.ContractReference:
@@ -199,16 +207,17 @@ def to_ts_type(term: Term) -> str:
         elif typedef == ScalarType.Varchar:
             return "string"
         else:
-            raise ValueError(f"Unsupported term scalar type: {term.scalar_type} :: {typedef}")        
+            raise ValueError(f"Unsupported term scalar type: {term.scalar_type} :: {typedef}")
 
     if term.is_array:
         return f"Array<{_map(term.scalar_type)}>"
     else:
         return _map(term.scalar_type)
 
+
 def to_ts_default(term: Term) -> str:
     """Maps an Actus term's default value to it's typescript equivalent.
-    
+
     """
     def get_enum_default_acronym():
         for member in term.allowed_values:
@@ -230,31 +239,33 @@ def to_ts_default(term: Term) -> str:
         elif term.scalar_type == ScalarType.Real:
             try:
                 return float(term.default)
-            except:
+            except ValueError:
                 return float(0)
         else:
             return f"'TODO: format default {term.scalar_type} :: {term.default}'"
 
     elif term.scalar_type == ScalarType.Real:
         return float(0)
-    
+
     return "null"
+
 
 def to_ts_optional_flag(term: Term) -> str:
     """Maps an Actus term to it's typescript optionality flag.
-    
+
     """
     return "" if term.default else "?"
 
+
 def to_ts_enum_member(member: EnumMember) -> str:
     """Maps an enum member to a typescript safe enum member name.
-    
+
     """
     # Some enum members begin with an integer which is unsafe in js.
     member_name = member.acronym
     try:
         member_name = member_name.upper()
-    except:
+    except BaseException:
         raise
 
     try:
@@ -263,6 +274,7 @@ def to_ts_enum_member(member: EnumMember) -> str:
         return member_name
     else:
         return f"_{member_name}"
+
 
 def to_underscore_case(target: str):
     """Helper function to convert a from camel case string to an underscore case string.

@@ -1,9 +1,7 @@
-from importlib.resources import is_resource
-
 
 def parse(obj: dict):
     """Parses ACTUS dictionary so as to simplify upstream processing consistency.
-    
+
     """
     _parse_contract_reference_enums(obj)
     _parse_contract_types(obj)
@@ -15,7 +13,7 @@ def parse(obj: dict):
 
 def _parse_contract_reference_enums(obj: dict):
     """Parses contract reference enum declarations.
-    
+
     """
     obj["contractReference"]["role"]["identifier"] = "referenceRole"
     obj["contractReference"]["type"]["identifier"] = "referenceType"
@@ -23,7 +21,7 @@ def _parse_contract_reference_enums(obj: dict):
 
 def _parse_contract_types(obj: dict):
     """Parses contract type declarations.
-    
+
     """
     # Collection of unsupported contract types.
     unsupported = []
@@ -58,7 +56,7 @@ def _parse_contract_types(obj: dict):
 
 def _parse_term_default(obj: dict):
     """Parses a term default declaration.
-    
+
     """
     for term_id in obj["terms"]:
         term: dict = obj["terms"][term_id]
@@ -70,7 +68,7 @@ def _parse_term_default(obj: dict):
 
 def _parse_term_scaling_effect(obj: dict):
     """Parses a term declaration: scaling effect.
-    
+
     """
     term: dict = obj["terms"]["scalingEffect"]
     term["default"] = "OOO"

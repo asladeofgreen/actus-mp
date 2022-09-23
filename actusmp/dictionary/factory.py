@@ -20,12 +20,12 @@ from actusmp.model import TermSet
 
 def get_dictionary() -> Dictionary:
     """Maps actus-dictionary.json file -> meta model.
-    
+
     """
     accessor = Accessor()
-    applicability=_get_applicability(accessor)
-    taxonomy=_get_taxonomy(accessor)
-    term_set=_get_term_set(accessor)
+    applicability = _get_applicability(accessor)
+    taxonomy = _get_taxonomy(accessor)
+    term_set = _get_term_set(accessor)
 
     return Dictionary(
         applicability=applicability,
@@ -46,13 +46,13 @@ def get_dictionary() -> Dictionary:
 
 def _get_applicability(accessor: Accessor) -> ApplicableTermInfoSet:
     """Decodes applicability declarations.
-    
-    """    
+
+    """
     items = []
     for contract_id, applicable_terms in accessor.applicability:
         for term_id, term_instruction in applicable_terms.items():
             if term_id == "contract":
-                continue            
+                continue
             items.append(
                 ApplicableTermInfo(
                     contract_type_id=contract_id,
@@ -68,9 +68,9 @@ def _get_contract_set(
     applicability: ApplicableTermInfoSet,
     taxonomy: Taxonomy,
     term_set: TermSet
-    ) -> ContractSet:
+) -> ContractSet:
     """Decodes set of derived contract declarations.
-    
+
     """
     def _map_termset(type_info: ContractTypeInfo) -> TermSet:
         contract_termset = []
@@ -92,7 +92,7 @@ def _get_contract_set(
 
 def _get_enum(obj: dict) -> EnumMember:
     """Decodes an enumeration declaration.
-    
+
     """
     return Enum(
         acronym=obj["acronym"],
@@ -105,7 +105,7 @@ def _get_enum(obj: dict) -> EnumMember:
 
 def _get_enum_member(obj: dict, is_default: typing.Optional[bool] = None) -> EnumMember:
     """Decodes an enumeration member declaration.
-    
+
     """
     return EnumMember(
         acronym=obj["acronym"],
@@ -119,7 +119,7 @@ def _get_enum_member(obj: dict, is_default: typing.Optional[bool] = None) -> Enu
 
 def _get_state_set(accessor: Accessor) -> StateSet:
     """Decodes set of states from Actus dictionary.
-    
+
     """
     def _map_allowed_value(scalar_type: ScalarType, value: typing.Union[str, dict]):
         if scalar_type == ScalarType.Enum:
@@ -135,7 +135,7 @@ def _get_state_set(accessor: Accessor) -> StateSet:
         return value
 
     def _map_state(obj: dict) -> State:
-        scalar_type=ScalarType[obj.get("type", "Unknown")]
+        scalar_type = ScalarType[obj.get("type", "Unknown")]
 
         return State(
             acronym=obj["acronym"],
@@ -152,7 +152,7 @@ def _get_state_set(accessor: Accessor) -> StateSet:
 
 def _get_taxonomy(accessor: Accessor) -> Taxonomy:
     """Decodes taxonomy information from Actus dictionary.
-    
+
     """
     def _map_contract_type_info(obj: dict) -> ContractTypeInfo:
         return ContractTypeInfo(
@@ -171,7 +171,7 @@ def _get_taxonomy(accessor: Accessor) -> Taxonomy:
 
 def _get_term_set(accessor: Accessor) -> TermSet:
     """Decodes set of terms from Actus dictionary.
-    
+
     """
     def _map_default(is_array: bool, scalar_type: ScalarType, value: str):
         if value is None:
@@ -187,7 +187,11 @@ def _get_term_set(accessor: Accessor) -> TermSet:
             print(f"TODO: map default value: {is_array} {scalar_type} {value}")
             return value
 
-    def _map_allowed(scalar_type: ScalarType, value: typing.Union[str, dict], default: typing.Union[str, float, list]):
+    def _map_allowed(
+        scalar_type: ScalarType,
+        value: typing.Union[str, dict],
+        default: typing.Union[str, float, list]
+    ):
         if scalar_type == ScalarType.Enum:
             return EnumMember(
                 acronym=value["acronym"],
@@ -203,12 +207,13 @@ def _get_term_set(accessor: Accessor) -> TermSet:
     def _map_term(obj: dict) -> Term:
         is_array: bool = obj["type"].endswith("[]")
         scalar_type_raw = obj["type"] if not is_array else obj["type"][:-2]
-        scalar_type=ScalarType[scalar_type_raw]
-        default_value=_map_default(is_array, scalar_type, obj["default"])
+        scalar_type = ScalarType[scalar_type_raw]
+        default_value = _map_default(is_array, scalar_type, obj["default"])
+        allowed = [_map_allowed(scalar_type, i, default_value) for i in obj["allowedValues"]]
 
         return Term(
             acronym=obj["acronym"],
-            allowed_values=[_map_allowed(scalar_type, i, default_value) for i in obj["allowedValues"]],
+            allowed_values=allowed,
             default=default_value,
             description=obj.get("description", obj["name"]).replace("\n", ""),
             group_id=obj["group"],
@@ -219,44 +224,3 @@ def _get_term_set(accessor: Accessor) -> TermSet:
         )
 
     return TermSet([_map_term(i) for i in accessor.term_set])
-
-
-
-#################################
-# Obsolete
-#################################
-
-def _get_term(obj: dict, prefix: str = "") -> Term:
-    if obj["type"].startswith("Enum"):
-        return Enum(
-            _members=[_get_enum_member(obj["identifier"], i) for i in obj["allowedValues"]],
-            acronym=obj["acronym"],
-            allowed_values=obj["allowedValues"],
-            default=obj.get("default"),
-            description=obj.get("description", obj["name"]).replace("\n", ""),
-            group_id=obj.get("group"),
-            identifier=f"{prefix}{obj['identifier']}",
-            name=obj['name'],
-            type=obj["type"]
-        )
-    else:
-        return Term(
-            acronym=obj["acronym"],
-            allowed_values=obj["allowedValues"],
-            default=obj["default"],
-            description=obj.get("description", obj["name"]).replace("\n", ""),
-            group_id=obj["group"],
-            identifier=obj["identifier"],
-            name=obj['name'],
-            scalar_type=obj["type"]
-        )
-
-
-def _get_contract_term_set(contract_id: str, applicability: ApplicableTermInfoSet, term_set: TermSet) -> Contract:
-    contract_term_set = []
-    for info in applicability.get_applicable_termset(contract_id):
-        for term in term_set:
-            if term.identifier == info.term_id:
-                contract_term_set.append(term)
-
-    return TermSet(contract_term_set)

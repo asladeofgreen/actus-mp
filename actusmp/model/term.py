@@ -8,7 +8,7 @@ from actusmp.model.scalar_type import ScalarType
 @dataclasses.dataclass
 class Term(Entity):
     """A contractual term associated with a specific type of financial contract.
-    
+
     """
     # Constraint over set of allowed values, e.g. 'ISO8601 Datetime'.
     allowed_values: typing.List[typing.Union[dict, str]]
@@ -43,18 +43,17 @@ class Term(Entity):
         return self.allowed_values if self.is_enum else []
 
 
-
 @dataclasses.dataclass
 class TermSet():
     """A set of contractual terms associated with a specific type of financial contract.
-    
+
     """
     # Collection of associated contract terms.
     _terms: typing.List[Term]
 
     def __iter__(self) -> typing.Iterator[Term]:
         """Instance iterator."""
-        return iter(sorted(self._terms, key=lambda i: i.identifier))    
+        return iter(sorted(self._terms, key=lambda i: i.identifier))
 
     def __len__(self) -> int:
         """Instance iterator length."""

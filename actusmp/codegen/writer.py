@@ -14,7 +14,7 @@ def write(lang: TargetLanguage, dest: pathlib.Path, path_to_java_impl: pathlib.P
     :param lang: Target progamming language.
     :param dest: Path to directory to which code will be emitted.
     :param path_to_java_impl: Path to actus-code Java library from which funcs will be derived.
-    
+
     """
     assert lang in TargetLanguage
     assert dest.exists and dest.is_dir
@@ -27,54 +27,60 @@ def write(lang: TargetLanguage, dest: pathlib.Path, path_to_java_impl: pathlib.P
             code_dest = _get_path_to_code_dest(dest, ctx, entity)
             fsys.write(code_dest, code_block)
 
+
 def _get_path_to_code_dest(dest: pathlib.Path, ctx: generator.GeneratorContext, entity):
     """Returns file system location to which code block will be written.
-    
+
     """
     if ctx.typeof in (TargetGenerator.FuncStubPOF, TargetGenerator.FuncStubSTF):
         return _get_path_to_code_dest_2(dest, ctx, entity)
     else:
         return _get_path_to_code_dest_1(dest, ctx, entity)
 
+
 def _get_path_to_code_dest_1(dest: pathlib.Path, ctx: generator.GeneratorContext, entity):
     """Returns file system location to which code block will be written.
-    
+
     """
     if ctx.lang == TargetLanguage.python:
         if ctx.typeof == TargetGenerator.Enum:
-            return dest / "types" / "enums" / f"{convertor.to_underscore_case(entity.identifier)}.py"
+            fname = f"{convertor.to_underscore_case(entity.identifier)}.py"
+            return dest / "types" / "enums" / fname
         elif ctx.typeof == TargetGenerator.EnumIndex:
             return dest / "types" / "enums" / "__init__.py"
         elif ctx.typeof == TargetGenerator.FuncIndex:
             return dest / "algos" / "__init__.py"
         elif ctx.typeof == TargetGenerator.FuncStubIndex:
-            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "__init__.py" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "__init__.py"
         elif ctx.typeof == TargetGenerator.FuncStubMain:
-            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "main.py" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "main.py"
         elif ctx.typeof == TargetGenerator.StateSpace:
             return dest / "types" / "core" / "states.py"
         elif ctx.typeof == TargetGenerator.Termset:
-            return dest / "types" / "terms" / f"{convertor.to_underscore_case(entity.type_info.acronym.lower())}.py"
+            fname = f"{convertor.to_underscore_case(entity.type_info.acronym.lower())}.py"
+            return dest / "types" / "terms" / fname
         elif ctx.typeof == TargetGenerator.TermsetIndex:
-            return dest / "types" / "terms" / "__init__.py"            
+            return dest / "types" / "terms" / "__init__.py"
 
     elif ctx.lang == TargetLanguage.rust:
         if ctx.typeof == TargetGenerator.Enum:
-            return dest / "types" / "enums" / f"{convertor.to_underscore_case(entity.identifier)}.rs"
+            fname = f"{convertor.to_underscore_case(entity.identifier)}.rs"
+            return dest / "types" / "enums" / fname
         elif ctx.typeof == TargetGenerator.EnumIndex:
             return dest / "types" / "enums" / "mod.rs"
         elif ctx.typeof == TargetGenerator.FuncIndex:
             return dest / "algos" / "mod.rs"
         elif ctx.typeof == TargetGenerator.FuncStubIndex:
-            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "mod.rs" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "mod.rs"
         elif ctx.typeof == TargetGenerator.FuncStubMain:
-            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "main.rs" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "main.rs"
         elif ctx.typeof == TargetGenerator.StateSpace:
             return dest / "types" / "core" / "states.rs"
         elif ctx.typeof == TargetGenerator.Termset:
-            return dest / "types" / "terms" / f"{convertor.to_underscore_case(entity.type_info.acronym.lower())}.rs"
+            fname = f"{convertor.to_underscore_case(entity.type_info.acronym.lower())}.rs"
+            return dest / "types" / "terms" / fname
         elif ctx.typeof == TargetGenerator.TermsetIndex:
-            return dest / "types" / "terms" / "mod.rs"            
+            return dest / "types" / "terms" / "mod.rs"
 
     elif ctx.lang == TargetLanguage.typescript:
         if ctx.typeof == TargetGenerator.Enum:
@@ -84,22 +90,24 @@ def _get_path_to_code_dest_1(dest: pathlib.Path, ctx: generator.GeneratorContext
         elif ctx.typeof == TargetGenerator.FuncIndex:
             return dest / "algos" / "index.ts"
         elif ctx.typeof == TargetGenerator.FuncStubIndex:
-            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "index.ts" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "index.ts"
         elif ctx.typeof == TargetGenerator.FuncStubMain:
-            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "main.ts" 
+            return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "main.ts"
         elif ctx.typeof == TargetGenerator.StateSpace:
             return dest / "types" / "core" / "states.ts"
         elif ctx.typeof == TargetGenerator.Termset:
-            return dest / "types" / "terms" / f"{convertor.to_pascal_case(entity.type_info.acronym.lower())}.ts"
+            fname = f"{convertor.to_pascal_case(entity.type_info.acronym.lower())}.ts"
+            return dest / "types" / "terms" / fname
         elif ctx.typeof == TargetGenerator.TermsetIndex:
             return dest / "types" / "terms" / "index.ts"
 
+
 def _get_path_to_code_dest_2(dest: pathlib.Path, ctx: generator.GeneratorContext, entity):
     """Returns file system location to which code block will be written.
-    
+
     """
     (defn, f_type, event_type, suffix) = entity
-    
+
     fname = f"{f_type.name.lower()}_{event_type}"
     fname = f"{fname}_{suffix}" if suffix else f"{fname}"
 

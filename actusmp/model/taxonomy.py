@@ -17,22 +17,22 @@ class ContractTypePublicationStatus(enum.Enum):
 
 @dataclasses.dataclass
 class ContractTypeInfo(Entity):
-    """A node within the ACTUS taxonomy representing a financial contract associated with 
+    """A node within the ACTUS taxonomy representing a financial contract associated with
        an algorithm for deriving cash flow exposure amoungst a set of counter-parties.
-    
+
     """
     # Contextual economic classification, e.g. 'Fixed Income'.
     classification: str
-    
+
     # Contextual economic coverage, e.g. 'classical level payment mortgages'.
     coverage: str
 
     # Contextual economic instrument family, e.g. 'Basic'.
     family: str
-        
+
     # Publication status, e.g. 'Released'.
     publication_status: ContractTypePublicationStatus
-    
+
     def __hash__(self):
         """Instance hash representation."""
         return hash(self.identifier)
@@ -48,11 +48,11 @@ class Taxonomy():
 
     """
     # Collection of associated applicable contract terms.
-    _items: typing.List[ContractTypeInfo] 
+    _items: typing.List[ContractTypeInfo]
 
     def __iter__(self) -> typing.Iterator[ContractTypeInfo]:
         """Instance iterator."""
-        return iter(sorted(self._items, key=lambda i: i.acronym))    
+        return iter(sorted(self._items, key=lambda i: i.acronym))
 
     def __len__(self) -> int:
         """Instance iterator length."""

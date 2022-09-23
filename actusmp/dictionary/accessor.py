@@ -13,7 +13,7 @@ _FILE: pathlib.Path = pathlib.Path(os.path.dirname(__file__)) / "actus-dictionar
 
 class Accessor():
     """Encapsulates access to actus-dictionary.json.
-    
+
     """
     def __init__(self):
         with open(_FILE, "r") as fstream:

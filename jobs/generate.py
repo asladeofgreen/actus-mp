@@ -30,6 +30,7 @@ _ARGS.add_argument(
     type=pathlib.Path
     )
 
+
 def _main(args: argparse.Namespace):
     """Main entry point.
 
