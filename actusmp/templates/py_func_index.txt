@@ -4,8 +4,8 @@
 import datetime
 import typing
 
-{% for contract in dictionary.applicable_contracts %}
-from pyactus.algos import {{contract.type_info.acronym.lower()}}
+{% for contract in dictionary.contract_set %}
+from pyactus.algos import algos_of_{{contract.type_info.acronym.lower()}}
 {% endfor %}
 from pyactus.types.core import ContractTermset
 from pyactus.types.core import Event
@@ -14,8 +14,8 @@ from pyactus.types.enums import ContractType
 
 # Map: contract type <-> function handle.
 _HANDLES = {
-{% for contract in dictionary.applicable_contracts %}
-    ContractType.{{contract.type_info.acronym}}: {{contract.type_info.acronym.lower()}},
+{% for contract in dictionary.contract_set %}
+    ContractType.{{contract.type_info.acronym}}: algos_of_{{contract.type_info.acronym.lower()}},
 {% endfor %}
 }
 
@@ -67,3 +67,8 @@ def get_schedule(
 
     return handle.get_schedule(to_date, term_set)
 
+
+__all__ = [
+    execute_step,
+    get_schedule
+]

@@ -49,7 +49,7 @@ def _get_path_to_code_dest_1(dest: pathlib.Path, ctx: generator.GeneratorContext
         elif ctx.typeof == TargetGenerator.EnumIndex:
             return dest / "types" / "enums" / "__init__.py"
         elif ctx.typeof == TargetGenerator.FuncIndex:
-            return dest / "algos" / "__init__.py"
+            return dest / "algos" / "executor.py"
         elif ctx.typeof == TargetGenerator.FuncStubIndex:
             return dest / "algos" / f"{entity.type_info.acronym.lower()}" / "__init__.py"
         elif ctx.typeof == TargetGenerator.FuncStubMain:
