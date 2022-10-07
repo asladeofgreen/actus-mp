@@ -1,6 +1,5 @@
 # **********************************
 # N.B. Auto-generated using actus-mp
 # **********************************
-from pyactus.funcset.{{defn.type_info.acronym.lower()}}.main import execute_step
-from pyactus.funcset.{{defn.type_info.acronym.lower()}}.main import get_schedule
-
+from pyactus.algos.{{defn.type_info.acronym.lower()}}.main import execute_step
+from pyactus.algos.{{defn.type_info.acronym.lower()}}.main import get_schedule
