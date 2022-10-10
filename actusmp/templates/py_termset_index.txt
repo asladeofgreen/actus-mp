@@ -8,13 +8,6 @@ from pyactus.types.enums import ContractType
 from pyactus.types.terms.{{utils.to_underscore_case(contract.type_info.acronym)}} import {{utils.to_camel_case(contract.type_info.identifier)}}Termset
 {% endfor %}
 
-# Map: contract type <-> contract field set.
-CONTRACT_FIELDSETS = {
-{% for contract in dictionary.contract_set %}
-    {{utils.to_camel_case(contract.type_info.identifier)}}Termset: {i.name: i for i in dataclasses.fields({{utils.to_camel_case(contract.type_info.identifier)}}Termset)},
-{% endfor %}
-}
-
 # Map: contract type <-> contract term set.
 CONTRACT_TERMSETS = {
 {% for contract in dictionary.contract_set %}
@@ -22,3 +15,7 @@ CONTRACT_TERMSETS = {
 {% endfor %}
 }
 
+# Map: contract type <-> contract field set.
+CONTRACT_FIELDSETS = {
+    i: {j.name: j for j in dataclasses.fields(i)} for i in CONTRACT_TERMSETS.values()
+    }
